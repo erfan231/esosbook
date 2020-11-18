@@ -5,15 +5,12 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from request import Book_titles, Book_prices
-from book_database import User
+from book_database import app, db, User
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'new_erfan'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.db'
+
 bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -47,7 +44,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user =User.query.filter_by(username=form.username.data).first()
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
