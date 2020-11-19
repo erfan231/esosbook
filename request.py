@@ -34,3 +34,8 @@ if __name__ == "__main__":
     main()
     print(len(Book_titles))
     print(len(Book_prices))
+
+
+
+else:
+    main() 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm 
 from wtforms import StringField, PasswordField, BooleanField
@@ -7,7 +7,7 @@ from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from request import Book_titles, Book_prices
-from book_database import app, db, User
+from database import app, db, User
 
 
 bootstrap = Bootstrap(app)
@@ -32,9 +32,6 @@ class RegisterForm(FlaskForm):
 
 
 
-
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -48,9 +45,10 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
+                flash("Loged in successfully as {}".format(str(form.username.data)))
                 return redirect(url_for('dashboard'))
 
-        return '<h1>Invalid username or password</h1>'
+        flash("Try again")
         #return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
     return render_template('login.html', form=form)
@@ -58,17 +56,19 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
-
+    login_form = LoginForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
-        return '<h1>New user has been created!</h1>'
+        flash("User  {} has been created!".format(str(form.username.data)))
+        return render_template('login.html', form= login_form)
         #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
 
-    return render_template('signup.html', form=form)
+    return render_template('signup.html', form= form)
+
 
 @app.route('/dashboard')
 @login_required
@@ -92,4 +92,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="10.254.25.197")

@@ -6,7 +6,7 @@ from flask_login import UserMixin
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'new_erfan'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # don't owrry about this alot
 
 db = SQLAlchemy(app)
@@ -18,10 +18,19 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    
     books = db.relationship("User_Books", backref="user") #this one looks for a class inside the python code
     #that's why we enter the name as User_Books
 
+    #                                   table name
+user_books_relationship = db.Table("user_book_relationship", db.Column(
+"get_book_id", db.Integer, db.ForeignKey("user_books.book_id"), primary_key=True),
+db.Column("all_books.id",db.Integer, db.ForeignKey("all_books.book_id"), primary_key=True))
 
+
+
+#what is the relationship between the user and All_Books?
+# well the user can create an order(book) from all books
 class All_Books(db.Model):
     __tablename__ = "all_books"
     book_id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +40,8 @@ class All_Books(db.Model):
     category = db.Column(db.String(50))
 
 
+
+# add conn with books and add id only 
 class User_Books(db.Model):
     __tablename__ = "user_books"
     book_id = db.Column(db.Integer, primary_key=True)
@@ -38,8 +49,10 @@ class User_Books(db.Model):
     author = db.Column(db.String(50))
     book_desc = db.Column(db.String(200))
     category = db.Column(db.String(50))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id")) #this one looks inside the db
-    #thats why i entered User as a all lowercase (user)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True) #this one looks inside the db
+    #thats why i entered User as all lowercase (user)
+    books = db.relationship("All_Books", secondary=user_books_relationship)
+
 
 
 
