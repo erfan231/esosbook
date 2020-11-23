@@ -12,47 +12,54 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # don't owrry about this a
 db = SQLAlchemy(app)
 db.init_app(app)
 
+"""
+#association table
+    #                 table name
+user_books = db.Table("user_books", db.Column(
+"user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+db.Column("book_id",db.Integer, db.ForeignKey("books.book_id"), primary_key=True))
+"""
 
-class User(UserMixin, db.Model):
+class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
-    
-    books = db.relationship("User_Books", backref="user") #this one looks for a class inside the python code
-    #that's why we enter the name as User_Books
 
-    #                                   table name
-user_books_relationship = db.Table("user_book_relationship", db.Column(
-"get_book_id", db.Integer, db.ForeignKey("user_books.book_id"), primary_key=True),
-db.Column("all_books.id",db.Integer, db.ForeignKey("all_books.book_id"), primary_key=True))
+
+    books = db.relationship('Books',
+    secondary="user_books",
+    lazy='dynamic',
+    backref=db.backref('user', lazy='dynamic'))
+
 
 
 
 #what is the relationship between the user and All_Books?
 # well the user can create an order(book) from all books
-class All_Books(db.Model):
-    __tablename__ = "all_books"
-    book_id = db.Column(db.Integer, primary_key=True)
+class Books(db.Model):
+    __tablename__ = "books"
+    id = db.Column(db.Integer, primary_key=True)
     book_name = db.Column(db.String(50), nullable=False, unique=True)
     author = db.Column(db.String(50))
     book_desc = db.Column(db.String(200))
     category = db.Column(db.String(50))
 
+    users = db.relationship("Users", secondary="user_Books")
+
+
+
+#association table
+class User_Books(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
+
+    users = db.relationship(Users, backref=db.backref("user_books",cascade="all, delete-orphan"))
+    books = db.relationship(Books, backref=db.backref("user_books", cascade="all,delete-orphan"))
 
 
 # add conn with books and add id only 
-class User_Books(db.Model):
-    __tablename__ = "user_books"
-    book_id = db.Column(db.Integer, primary_key=True)
-    book_name = db.Column(db.String(50), nullable=False, unique=True)
-    author = db.Column(db.String(50))
-    book_desc = db.Column(db.String(200))
-    category = db.Column(db.String(50))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True) #this one looks inside the db
-    #thats why i entered User as all lowercase (user)
-    books = db.relationship("All_Books", secondary=user_books_relationship)
-
 
 
 
@@ -65,29 +72,42 @@ if __name__ == "__main__":
     db.create_all()
 
 
+else:
+    pass
 
-"""
-
-
-# if you don't have access to the object you can add to the database this way
-  #current_user.username
-user = User.query.filter_by(username="Erfan").first() # get the user
-new_user_book = User_Books(book_name="Zero to One")
-db.sesison.add(new_user_book)
-db.sesion.commit()
+    """
 
 
-# get all the user books
- #current_user.username
-user_data = User.query.filter_by(username="Erfan").first()
-user_data.username #users username
-user_data.email #users email
+    # if you don't have access to the object you can add to the database this way
+    #current_user.username
+    user = User.query.filter_by(username="Erfan").first() # get the user
+    new_user_book = User_Books(book_name="Zero to One")
+    db.sesison.add(new_user_book)
+    db.sesion.commit()
 
 
-#get the users books
-user_data.books[0].username #this will get the first book that the user owns and the books name
+    # get all the user books
+    #current_user.username
+    user_data = User.query.filter_by(username="Erfan").first()
+    user_data.username #users username
+    user_data.email #users email
+
+
+    #get the users books
+    user_data.books[0].username #this will get the first book that the user owns and the books name
 
 
 
 
-"""
+    """
+
+
+
+
+    #user = Users.query.first()
+    #user.products  # List all products, eg [<productA>, <productB> ]
+    #user.orders    # List all orders, eg [<order1>, <order2>]
+    #user.orders[0].products  # List products from the first order
+
+    #p1 = Product.query.first()
+    #p1.users  # List all users who have bought this product, eg [<user1>, <user2>]

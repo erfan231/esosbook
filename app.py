@@ -6,8 +6,8 @@ from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from request import Book_titles, Book_prices
-from database import app, db, User
+import request
+from database import app, db, Users
 
 
 bootstrap = Bootstrap(app)
@@ -18,7 +18,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
@@ -41,7 +41,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
@@ -59,7 +59,7 @@ def signup():
     login_form = LoginForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        new_user = Users(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -71,16 +71,16 @@ def signup():
 
 
 @app.route('/dashboard')
-@login_required
+#@login_required
 def dashboard():
     
-    return render_template('dashboard.html', name=current_user.username, data = "gg")
+    return render_template('dashboard.html', name="erfan", data = "Book1")
 
 
 @app.route("/export")
 def export():
-    data = zip(Book_titles,Book_prices)
-    return render_template("export_books.html", data = data)
+    #data = zip(Book_titles,Book_prices)
+    return render_template("export_books.html", data = ("book","idk"))
 
 
 @app.route('/logout')
@@ -92,4 +92,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="10.254.25.197")
+    app.run(debug=True)
