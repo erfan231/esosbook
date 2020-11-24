@@ -11,6 +11,23 @@ Login
 {% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages() %}
+ 
+{% if messages %}
+
+{% for message in messages %}
+<div class="alert alert-danger" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+      <span aria-hidden="true">X</span>
+  </button>
+ {{message}}
+ 
+</div>
+{% endfor  %}
+
+{% endif %}
+
+{% endwith %}
     <div class="container">
 
       <form class="form-signin" method="POST" action="/login">
@@ -21,6 +38,7 @@ Login
         {{ wtf.form_field(form.remember) }}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
+      
 
     </div> <!-- /container -->
 {% endblock %}

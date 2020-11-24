@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import request
 from database import app, db, Users
+from sqlalchemy.exc import IntegrityError
 
 db.create_all()
 
@@ -27,9 +28,10 @@ class LoginForm(FlaskForm):
     remember = BooleanField('remember me')
 
 class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
+    username = StringField('Username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=6, max=80)])
+    confirm_password = PasswordField("Confirm Password", validators=[InputRequired()])
 
 
 
@@ -46,10 +48,9 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
-                flash("Loged in successfully as {}".format(str(form.username.data)))
                 return redirect(url_for('dashboard'))
 
-        flash("Try again")
+        flash("Invalid Credential, Try again")
         #return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
     return render_template('login.html', form=form)
@@ -59,16 +60,21 @@ def signup():
     form = RegisterForm()
     login_form = LoginForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
-        new_user = Users(username=form.username.data, email=form.email.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
+        if form.password.data == form.confirm_password.data:
+            hashed_password = generate_password_hash(form.password.data, method='sha256')
+            new_user = Users(username=form.username.data, email=form.email.data, password=hashed_password)
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                flash("User  {} has been created!".format(str(form.username.data)))
 
-        flash("User  {} has been created!".format(str(form.username.data)))
-        return render_template('login.html', form= login_form)
+                return render_template('login.html', form= login_form)
         #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
+            except IntegrityError as error:
+                flash("User already exists. Please login instead")
+        error = "Error"
 
-    return render_template('signup.html', form= form)
+    return render_template('signup.html', form= form, flash=flash)
 
 
 @app.route('/dashboard')
