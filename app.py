@@ -9,6 +9,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 import request
 from database import app, db, Users
 
+db.create_all()
 
 bootstrap = Bootstrap(app)
 login_manager = LoginManager()
@@ -71,7 +72,7 @@ def signup():
 
 
 @app.route('/dashboard')
-#@login_required
+@login_required
 def dashboard():
     
     return render_template('dashboard.html', name="erfan", data = "Book1")
@@ -91,5 +92,23 @@ def logout():
 
 
 
+@app.route("/testform", methods=['GET','POST'])
+def form():
+    form = LoginForm()
+    if form.validate_on_submit():
+        try:
+            user = models.User.get(models.User.username == form.username.data)
+        except models.DoesNotExist:
+            flash("Your username or password doesn't match")
+        else:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash("You've been logged in!")
+                return redirect(url_for('index'))
+            else:
+                flash("Your username or password doesn't match")
+    return render_template("test_forms.html")
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="10.254.25.210")

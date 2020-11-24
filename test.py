@@ -113,13 +113,3 @@ example = Table('example', metadata,
 
 
   """
-
-
-
-    #user = Users.query.first()
-    #user.products  # List all products, eg [<productA>, <productB> ]
-    #user.orders    # List all orders, eg [<order1>, <order2>]
-    #user.orders[0].products  # List products from the first order
-
-    #p1 = Product.query.first()
-    #p1.users  # List all users who have bought this product, eg [<user1>, <user2>]

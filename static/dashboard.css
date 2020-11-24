@@ -125,3 +125,20 @@ body {
   background-color: #4CAF50;
   color: white;
 }
+
+
+
+/* for the tooltip btns */
+
+.btn-primary_new {
+  color: #fff;
+  background-color:#fff;
+  border-color: #fff;
+}
+
+.btn-primary_new:hover {
+  color: #fff;
+  background-color: #fff;
+  border-color: #fff;
+}
+
