@@ -10,127 +10,175 @@ Dashboard
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigatio222n</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Esos</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>
-      </div>
-    </nav> 
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="">Export</a></li>
-          </ul>
-  
-                    <ul class="nav nav-sidebar">
-                      <li><a href="ex">Nav item</a></li>
-                      <li><a href="">Nav item again</a></li>
-                      <li><a href="">One more nav</a></li>
-                      <li><a href="">Another nav item</a></li>
-                      <li><a href="">More navigation</a></li>
-                    </ul>
-                    <ul class="nav nav-sidebar">
-                      <li><a href="">Nav item again</a></li>
-                      <li><a href="">One more nav</a></li>
-                      <li><a href="">Another nav item</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h1 class="page-header">Welcome, {{ name }}</h1>
-          
-                    <div class="row placeholders">
-                      <div class="col-xs-6 col-sm-3 placeholder">
-                        <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong">><img src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="200" height="400" class="img-responsive" alt="Book 1"></button>
-                        <h4>Book 1</h4>
-                        <span class="text-muted">desc of the book</span>
-                      </div>
-                      <div class="col-xs-6 col-sm-3 placeholder">
-                        <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong">><img src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="200" height="400" class="img-responsive" alt="Book 1"></button>
-                        <h4>Book 2</h4>
-                        <span class="text-muted">desc of the book</span>
-                      </div>
-                      <div class="col-xs-6 col-sm-3 placeholder">
-                        <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong">><img src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="200" height="400" class="img-responsive" alt="Book 1"></button>
-                        <h4>Book 3</h4>
-                        <span class="text-muted">desc of the book</span>
-                      </div>
-                      <div class="col-xs-6 col-sm-3 placeholder">
-                        <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong">><img src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="200" height="400" class="img-responsive" alt="Book 1"></button>
-                        <h4>Book 4</h4>
-                        <span class="text-muted">desc of the book</span>
-                      </div>
-                    </div>
-                   
-                    <h2 class="sub-header">Other Read Books</h2>
-                    <div class="table-responsive">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                              <th>Book Name</th>
-                              <th>Desc</th>
-                          </tr>
-                          </thead>    
-                          <tbody>
-                              
-                              {% for result in data %}        
-                                  <tr>
-                                      <td>{{data}}</td>
-                                      <td><div contenteditable>Write a desc</div></td><td> <!-- add desc here {{desc}} -->
-                                  </tr>
-                              {% endfor %}
-          
-          
-                            
- 
-          <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalLong">
-  Book info
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalLongTitle">Book title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        by: ......
-        catogery: ......
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-save">Save changes</button>
-      </div>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+        aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Esos</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+      </ul>
+      <form class="navbar-form navbar-right">
+        <input type="text" class="form-control" placeholder="Search...">
+      </form>
     </div>
   </div>
-</div>
+</nav>
 
-      {% endblock %}
-                    
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <h1 class="page-header">Welcome, {{ name }}</h1>
+
+      <div class="row placeholders">
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong"><img
+              src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+              width="200" height="400" class="img-responsive" alt="Book 1"></button>
+          <h4>Book 1</h4>
+          <span class="text-muted">desc of the book</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong"><img
+              src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+              width="200" height="400" class="img-responsive" alt="Book 1"></button>
+          <h4>Book 2</h4>
+          <span class="text-muted">desc of the book</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong"><img
+              src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+              width="200" height="400" class="img-responsive" alt="Book 1"></button>
+          <h4>Book 3</h4>
+          <span class="text-muted">desc of the book</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong"><img
+              src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+              width="200" height="400" class="img-responsive" alt="Book 1"></button>
+          <h4>Book 4</h4>
+          <span class="text-muted">desc of the book</span>
+        </div>
+      </div>
+
+      <h2 class="sub-header">Other Read Books</h2>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Book Name</th>
+              <th>date added</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for result in data %}
+            <tr>
+              <td>{{result.book_name}}</td>
+              <td>
+                <div contenteditable>25/11/2020</div>
+              </td>
+              <td>
+                <!-- add desc here {{desc}} -->
+              <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+                  data-whatever="@getbootstrap">Book info</button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <div class="input-group-prepend">
+
+                          <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                            aria-describedby="basic-addon1">
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <input type="text" class="form-control" placeholder="Recipient's username"
+                            aria-label="Recipient's username" aria-describedby="basic-addon2">
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">@example.com</span>
+                          </div>
+                        </div>
+
+                        <label for="basic-url">more info</label>
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
+                          </div>
+                          <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"></span>
+                          </div>
+                          <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                          <div class="input-group-append">
+                            <span class="input-group-text"></span>
+                          </div>
+                        </div>
+
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">With textarea</span>
+                          </div>
+                          <textarea class="form-control" aria-label="With textarea"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+
+              </td>
+            </tr>
+            {% endfor %}
+
+
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalLong">
+              Book info
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
+              aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLongTitle">Book title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    by: ......
+                    catogery: ......
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-save">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endblock %}
