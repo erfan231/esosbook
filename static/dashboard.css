@@ -142,3 +142,6 @@ body {
   border-color: #fff;
 }
 
+
+.form-control {
+  padding:6px 12px;

@@ -24,9 +24,9 @@ Dashboard
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Home</a></li>
         <li><a href="#">Settings</a></li>
-        <li><a href="#">Profile</a></li>
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
         <li><a href="{{ url_for('logout') }}">Log Out</a></li>
       </ul>
       <form class="navbar-form navbar-right">
@@ -103,32 +103,24 @@ Dashboard
                     <div class="modal-content">
                       <div class="modal-header">
                         <div class="input-group-prepend">
-
-                          <input type="text" class="form-control" placeholder="Username" aria-label="Username"
-                            aria-describedby="basic-addon1">
+                          <label for="book_title">Book Title:
+                            <input type="text" value="{{result.book_name}}" autocomplete="off" id="book_title" class="form-control"  placeholder="Book Title" aria-label="Book Name"
+                            aria-describedby="basic-addon1"/></label>
                         </div>
 
                         <div class="input-group mb-3">
-                          <input type="text" class="form-control" placeholder="Recipient's username"
-                            aria-label="Recipient's username" aria-describedby="basic-addon2">
+                          <label for="book_author">Author:
+                            <input type="text" value="{{result.author}}" autocomplete="off" id="book_author" class="form-control"  placeholder="Author" aria-label="Author"
+                            aria-describedby="basic-addon1"/></label>
                           <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">@example.com</span>
-                          </div>
-                        </div>
-
-                        <label for="basic-url">more info</label>
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-                          </div>
-                          <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
-                        </div>
-
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
                             <span class="input-group-text"></span>
                           </div>
-                          <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <label for="category">Category:
+                            <input type="text" value="{{result.category}}" autocomplete="off" id="category" class="form-control"  placeholder="Author" aria-label="Author"
+                            aria-describedby="basic-addon1"/></label>
                           <div class="input-group-append">
                             <span class="input-group-text"></span>
                           </div>
@@ -136,9 +128,9 @@ Dashboard
 
                         <div class="input-group">
                           <div class="input-group-prepend">
-                            <span class="input-group-text">With textarea</span>
+                            <span class="input-group-text">Summary:</span>
                           </div>
-                          <textarea class="form-control" aria-label="With textarea"></textarea>
+                          <textarea class="form-control" placeholder="Write a short summary about the book" aria-label="Summary of the book">huiiiiiio</textarea>
                         </div>
                       </div>
                     </div>
@@ -153,12 +145,12 @@ Dashboard
 
 
 
-            <!-- Button trigger modal -->
+            <!-- Button trigger modal 
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalLong">
               Book info
             </button>
 
-            <!-- Modal -->
+             Modal 
             <div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
               aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -180,5 +172,7 @@ Dashboard
                 </div>
               </div>
             </div>
+
+          -->
 
             {% endblock %}

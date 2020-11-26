@@ -25,21 +25,21 @@ def load_user(user_id):
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[
-                           InputRequired(), Length(min=4, max=15)])
+                           InputRequired(), Length(min=4, max=15)],render_kw={"placeholder": "Username"})
     password = PasswordField('password', validators=[
-                             InputRequired(), Length(min=8, max=80)])
+                             InputRequired(), Length(min=8, max=80)],render_kw={"placeholder": "Password"})
     remember = BooleanField('remember me')
 
 
 class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(
-        message='Invalid email'), Length(max=50)])
+        message='Invalid email'), Length(max=50)],render_kw={"placeholder": "Email"})
     username = StringField('Username', validators=[
-                           InputRequired(), Length(min=4, max=15)])
+                           InputRequired(), Length(min=4, max=15)], render_kw={"placeholder": "Username"})
     password = PasswordField('Password', validators=[
-                             InputRequired(), Length(min=6, max=80)])
+                             InputRequired(), Length(min=6, max=80)],render_kw={"placeholder": "Password"})
     confirm_password = PasswordField(
-        "Confirm Password", validators=[InputRequired()])
+        "Confirm Password", validators=[InputRequired()],render_kw={"placeholder": "Confirm Password"})
 
 
 @app.route('/')
@@ -60,9 +60,10 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('dashboard'))
+            flash("Invalid Credential, Try again", "warning")
+
         flash("user don't exists", "warning")
 
-        flash("Invalid Credential, Try again", "warning")
         # return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
     return render_template('login.html', form=form)
@@ -95,11 +96,18 @@ def signup():
     return render_template('signup.html', form=form, flash=flash, pass_not = pass_not)
 
 
+file = open("answer.txt", "w+")
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    books = ""
     try:
-        books = Books.query.all()
+        query = Users.query.filter_by(username=str(current_user.username)).first()
+        books = query.books
+        file.write(str(current_user.id))
+        file.close()
     except:
         flash("An error occured when trying to get your books", "danger")
     return render_template('dashboard.html', name="erfan", data=books)
@@ -135,6 +143,11 @@ def form():
                 flash("Your username or password doesn't match")
     return render_template("test_forms.html")
 
+
+@app.route("/user")
+@login_required
+def profile():
+    return render_template("profile.html")
 
 if __name__ == '__main__':
     app.run(debug=True, host="10.254.25.210")
