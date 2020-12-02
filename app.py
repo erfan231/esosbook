@@ -15,7 +15,7 @@ db.create_all()
 
 
 
-host = "10.254.25.197"
+host = "10.254.25.210"
 port = 5000
 
 bootstrap = Bootstrap(app)

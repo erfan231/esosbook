@@ -43,112 +43,123 @@ Dashboard
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       <h3 class="page-header">Welcome, {{ name }}</h3>
+     
+      {% if fav_book_num == 0 %}
+      <h1>Empty fav books</h1>
+
+      {% endif %}
 
       {% for x in range(fav_book_num) %}
-
       <div class="row placeholders">
         <div class="col-xs-6 col-sm-3 placeholder">
           <button type="button" class="btn btn-primary_new" data-toggle="modal" data-target="#ModalLong"><img
               src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
               width="200" height="300" class="img-responsive" alt="Book 1"></button>
-          <h4>{{fav_books[x].book_name}}</h4>
-          <span class="text-muted">BY: {{fav_books[x].author}}</span>
+          <h4>{{fav_books[1].book_name}}</h4>
+          <span class="text-muted">BY: {{fav_books[1].author}}</span>
+
+          
         </div>
-      </div>
       {% endfor %}
+        </div>
 
-      <div class="table-responsive">
-        <h2 class="sub-header">Other Read Books</h2>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>&nbsp;&nbsp;Book Name</th>
-              <th>&nbsp;&nbsp;date added</th>
-            </tr>
-          </thead>
-          {% for book_num in range(num_of_books) %}
-          <tbody>
-            <tr>
-              <td>{{books[book_num].book_name}}</td>
-              <td>
-                <div contenteditable>{{books[book_num].time_stamp}}</div>
-              </td>
-              <td>
-                <!-- add desc here {{desc}} -->
-              <td>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
-                  data-whatever="@getbootstrap">Book info</button>
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <div class="input-group-prepend">
-                          <label for="book_title">Book Title:
-                            <input type="text" value="{{books[book_num].book_name}}" autocomplete="off" id="book_title"
-                              class="form-control" placeholder="Book Title" aria-label="Book Name"
-                              aria-describedby="basic-addon1" /></label>
-                        </div>
-
-                        <div class="input-group mb-3">
-                          <label for="book_author">Author:
-                            <input type="text" value="{{books[book_num].author}}" autocomplete="off" id="book_author"
-                              class="form-control" placeholder="Author" aria-label="Author"
-                              aria-describedby="basic-addon1" /></label>
-                          <div class="input-group-append">
-                            <span class="input-group-text"></span>
-                          </div>
-                        </div>
-
-                        <div class="input-group mb-3">
-                          <label for="category">Category:
-                            <input type="text" value="{{books[book_num].category}}" autocomplete="off" id="category"
-                              class="form-control" placeholder="Author" aria-label="Author"
-                              aria-describedby="basic-addon1" /></label>
-                          <div class="input-group-append">
-                            <span class="input-group-text"></span>
-                          </div>
-                        </div>
-
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Summary:</span>
-                          </div>
-                          <textarea class="form-control" placeholder="Write a short summary about the book"
-                            aria-label="Summary of the book">{{books[book_num].book_desc}}</textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </td>
-            </tr>
-            {% endfor %}
-
-
-
-            <!-- Button trigger modal -->
-            <div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
+  <div class="table-responsive">
+    <h2 class="sub-header">Other Read Books</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>&nbsp;&nbsp;Book Name</th>
+          <th>&nbsp;&nbsp;date added</th>
+        </tr>
+      </thead>
+      {% if num_of_books == 0 %}
+      <h3>you haven't read any books yet</h3>
+      <p>GUI adding will be added soon ;)</p>
+      {% endif %}
+      {% for book_num in range(num_of_books) %}
+      <tbody>
+        <tr>
+          <td>{{books[book_num].book_name}}</td>
+          <td>
+            <div contenteditable>{{books[book_num].time_stamp}}</div>
+          </td>
+          <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+              data-whatever="@getbootstrap">Book info</button>
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="ModalLongTitle">Book title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    by: ......
-                    catogery: ......
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-save">Save changes</button>
+                    <div class="input-group-prepend">
+                      <label for="book_title">Book Title:
+                        <input type="text" value="{{books[book_num].book_name}}" autocomplete="off" id="book_title"
+                          class="form-control" placeholder="Book Title" aria-label="Book Name"
+                          aria-describedby="basic-addon1" /></label>
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <label for="book_author">Author:
+                        <input type="text" value="{{books[book_num].author}}" autocomplete="off" id="book_author"
+                          class="form-control" placeholder="Author" aria-label="Author"
+                          aria-describedby="basic-addon1" /></label>
+                      <div class="input-group-append">
+                        <span class="input-group-text"></span>
+                      </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                      <label for="category">Category:
+                        <input type="text" value="{{books[book_num].category}}" autocomplete="off" id="category"
+                          class="form-control" placeholder="Author" aria-label="Author"
+                          aria-describedby="basic-addon1" /></label>
+                      <div class="input-group-append">
+                        <span class="input-group-text"></span>
+                      </div>
+                    </div>
+
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Summary:</span>
+                      </div>
+                      <textarea class="form-control" placeholder="Write a short summary about the book"
+                        aria-label="Summary of the book">{{books[book_num].book_desc}}</textarea>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {% endblock %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+    <!-- Button trigger modal -->
+    <div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalLongTitle">Book title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            by: ......
+            catogery: ......
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  {% endblock %}
