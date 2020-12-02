@@ -9,8 +9,14 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 #import request
 from database import app, db, Users, Books
 from sqlalchemy.exc import IntegrityError
+from flask import request
 
 db.create_all()
+
+
+
+host = "10.254.25.197"
+port = 5000
 
 bootstrap = Bootstrap(app)
 login_manager = LoginManager()
@@ -84,7 +90,7 @@ def signup():
             try:
                 db.session.add(new_user)
                 db.session.commit()
-                flash("User  {} has been created!".format(str(form.username.data)), "success")
+                flash("User  {} has been sucessfully created!".format(str(form.username.data)), "success")
 
                 return render_template('login.html', form=login_form)
         # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
@@ -96,21 +102,25 @@ def signup():
     return render_template('signup.html', form=form, flash=flash, pass_not = pass_not)
 
 
-file = open("answer.txt", "w+")
 
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    #default values
     books = ""
+    
     try:
-        query = Users.query.filter_by(username=str(current_user.username)).first()
-        books = query.books
-        file.write(str(current_user.id))
-        file.close()
+        user = Users.query.filter_by(username=str(current_user.username)).first()
+        books = user.user_books
+        book_num = books.count()
+
+        fav_books = user.usr_fav_books
+        fav_book_num = fav_books.count()
+
     except:
         flash("An error occured when trying to get your books", "danger")
-    return render_template('dashboard.html', name="erfan", data=books)
+    return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num,fav_book_num=fav_book_num,fav_books=fav_books)
 
 
 @app.route("/export")
@@ -128,21 +138,14 @@ def logout():
 
 @app.route("/testform", methods=['GET', 'POST'])
 def form():
-    form = LoginForm()
-    if form.validate_on_submit():
-        try:
-            user = models.User.get(models.User.username == form.username.data)
-        except models.DoesNotExist:
-            flash("Your username or password doesn't match")
-        else:
-            if check_password_hash(user.password, form.password.data):
-                login_user(user)
-                flash("You've been logged in!")
-                return redirect(url_for('index'))
-            else:
-                flash("Your username or password doesn't match")
-    return render_template("test_forms.html")
-
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'Do Something':
+           return "DO something worked"
+        elif request.form['submit_button'] == 'Do Something Else':
+            pass # do something else
+    
+    elif request.method == 'GET':
+        return render_template('test_forms.html', form=form)
 
 @app.route("/user")
 @login_required
@@ -150,4 +153,4 @@ def profile():
     return render_template("profile.html")
 
 if __name__ == '__main__':
-    app.run(debug=True, host="10.254.25.210")
+    app.run(debug=True,host=host,port=port)

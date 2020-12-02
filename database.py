@@ -28,11 +28,15 @@ class Users(UserMixin, db.Model):
     password = db.Column(db.String(80))
 
 
-    books = db.relationship('Books',
+    user_books = db.relationship('Books',
     secondary="user_books",
     lazy='dynamic',
     backref=db.backref('user', lazy='dynamic'))
 
+    usr_fav_books = db.relationship('Books',
+    secondary="user_fav_books",
+    lazy='dynamic',
+    backref=db.backref('usr_favorite', lazy='dynamic'))
 
 
 #what is the relationship between the user and All_Books?
@@ -44,8 +48,11 @@ class Books(db.Model):
     author = db.Column(db.String(50))
     book_desc = db.Column(db.String(200))
     category = db.Column(db.String(50))
+    time_stamp = db.Column(db.DateTime(timezone=True), default=time.localtime())
+
 
     users = db.relationship("Users", secondary="user_books")
+    users = db.relationship("Users", secondary="user_fav_books")
 
 
 
@@ -55,10 +62,19 @@ class User_Books(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
-    time_stamp = db.Column(db.DateTime(timezone=True), default=time.localtime())
 
     users = db.relationship(Users, backref=db.backref("User_Books",cascade="all, delete-orphan"))
     books = db.relationship(Books, backref=db.backref("User_Books", cascade="all,delete-orphan"))
+
+
+class User_fav_books(db.Model):
+    __tablename__ = "user_fav_books"
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
+
+    users = db.relationship(Users, backref=db.backref("User_fav_books",cascade="all, delete-orphan"))
+    books = db.relationship(Books, backref=db.backref("User_fav_books", cascade="all,delete-orphan"))
 
 if __name__ == "__main__":
     db.create_all()
