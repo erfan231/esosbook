@@ -9,13 +9,12 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 #import request
 from database import app, db, Users, Books
 from sqlalchemy.exc import IntegrityError
-from flask import request
 
 db.create_all()
 
 
 
-host = "10.254.25.210"
+host = "127.0.0.1"
 port = 5000
 
 bootstrap = Bootstrap(app)
@@ -47,6 +46,24 @@ class RegisterForm(FlaskForm):
     confirm_password = PasswordField(
         "Confirm Password", validators=[InputRequired()],render_kw={"placeholder": "Confirm Password"})
 
+
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    #default values
+    try:
+        user = Users.query.filter_by(username=str(current_user.username)).first()
+        books = user.user_books
+        book_num = books.count()
+
+        fav_books = user.usr_fav_books
+        fav_book_num = fav_books.count()
+
+    except:
+        flash("An error occured when trying to get your books", "danger")
+    return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num,fav_book_num=fav_book_num,fav_books=fav_books)
 
 @app.route('/')
 def index():
@@ -111,26 +128,6 @@ def signup():
 
     return render_template('signup.html', form=form, flash=flash, pass_not = pass_not)
 
-
-
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    #default values
-    books = ""
-    
-    try:
-        user = Users.query.filter_by(username=str(current_user.username)).first()
-        books = user.user_books
-        book_num = books.count()
-
-        fav_books = user.usr_fav_books
-        fav_book_num = fav_books.count()
-
-    except:
-        flash("An error occured when trying to get your books", "danger")
-    return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num,fav_book_num=fav_book_num,fav_books=fav_books)
 
 
 @app.route("/export")

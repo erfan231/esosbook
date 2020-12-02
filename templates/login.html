@@ -8,14 +8,16 @@ Login
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<style>
+  p {
+    text-align: center;
+  }
+  </style>
+
 {% endblock %}
 
 {% block content %}
-<style>
-  h3 {
-    text-align: center;
-  }
-</style>
+
 {% with messages = get_flashed_messages(category_filter=["danger"]) %}
 {% if messages %}
 {% for message in messages %}
@@ -72,7 +74,7 @@ Login
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
 
-      <h4>Not a member yet? <a href="{{ url_for('signup') }}">Sign Up</a></h4>
+      <p>Not a member yet? <a href="{{ url_for('signup') }}">Sign Up</a></p>
       
 
     </div> <!-- /container -->
