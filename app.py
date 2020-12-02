@@ -50,6 +50,16 @@ class RegisterForm(FlaskForm):
 
 @app.route('/')
 def index():
+    if current_user.is_authenticated:
+
+        user = Users.query.filter_by(username=str(current_user.username)).first()
+        books = user.user_books
+        book_num = books.count()
+
+        fav_books = user.usr_fav_books
+        fav_book_num = fav_books.count()
+        
+        return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num,fav_book_num=fav_book_num,fav_books=fav_books)
     return render_template('index.html')
 
 

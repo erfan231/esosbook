@@ -11,8 +11,11 @@ Login
 {% endblock %}
 
 {% block content %}
-
-<!--dangerflash-->
+<style>
+  h3 {
+    text-align: center;
+  }
+</style>
 {% with messages = get_flashed_messages(category_filter=["danger"]) %}
 {% if messages %}
 {% for message in messages %}
@@ -69,7 +72,7 @@ Login
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
 
-      <p>Not a member yet? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+      <h4>Not a member yet? <a href="{{ url_for('signup') }}">Sign Up</a></h4>
       
 
     </div> <!-- /container -->
