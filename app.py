@@ -14,7 +14,7 @@ db.create_all()
 
 
 
-host = "127.0.0.1"
+host = "10.254.25.197"
 port = 5000
 
 bootstrap = Bootstrap(app)
@@ -93,9 +93,10 @@ def login():
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('dashboard'))
-            flash("Invalid Credential, Try again", "warning")
-
-        flash("user don't exists", "warning")
+            else:
+                flash("Invalid Credential, Try again", "warning")
+        else:
+            flash("user don't exists, Please Sign Up", "warning")
 
         # return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
