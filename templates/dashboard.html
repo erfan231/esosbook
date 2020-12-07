@@ -44,14 +44,14 @@ Dashboard
 <h3 class="page-header">Welcome, {{ name }}</h3>
 
 {% if fav_book_num == 0 %}
-<h1>Favorite books</h1>
+<h1>Add ypur favorite books </h1>
 
 {% endif %}
 
-{% for x in range(fav_book_num) %}
+<!--{% for x in range(fav_book_num) %}-->
 <div class="row placeholders">
   <div class="col-xs-6 col-sm-3 placeholder">
-    <button type="button" class="btn btn-primary_new" id="img_btn" data-toggle="modal" data-target="#ModalLong"><img
+    <button type="button" class="btn btn-primary_new" id="img_btn" data-toggle="modal" data-target="#ModalLong{{fav_books[x].id}}"><img
         src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="180"
         height="240" class="img-responsive" alt="Book 1"></button>
 
@@ -60,7 +60,7 @@ Dashboard
 
 
   </div>
-  {% endfor %}
+  <!--{% endfor %}-->
 </div>
 </div>
 </div>
@@ -73,11 +73,13 @@ Dashboard
     <p>CLick the button below to add books</p>
     {% endif %}
     <thead>
-      <tr>
+      <tr class="d-flex">
         <th>#</th>
         <th>Book Name</th>
-        <th>date added</th>
+        <th>Date Added</th>
+        <th>Latest Update</th>
       </tr>
+
     </thead>
     {% for book_num in range(num_of_books) %}
     <tbody>
@@ -86,25 +88,28 @@ Dashboard
       <td>{{books[book_num].book_name}}</td>
       <td>{{books[book_num].time_stamp}}
       </td>
+      <td>3/12/2020</td>
       <td>
-        <button type="button" class="btn btn-primary" id = "btn" data-toggle="modal" data-target="#exampleModal"
+        <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#modal{{books[book_num].id}}"
           data-whatever="@getbootstrap">Book info</button>
       </td>
-      </tr>
+      <td>
+        <a href="delete/{{ub[0]}}" class="btn btn-danger">Delete</a>
+      </td>
       {% endfor %}
     </tbody>
   </table>
 
 
 
-
   <!--img_btn trigger-->
-  <div class="modal fade" id="ModalLong" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
+  {% for x in range(fav_book_num) %}
+  <div class="modal fade" id="ModalLong{{fav_books[x].id}}" tabindex="-1" role="dialog" aria-labelledby="ModalLongTitle"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="ModalLongTitle">Book title</h5>
+        <h5 class="modal-title" id="ModalLongTitle">{{fav_books[x].book_name}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -112,8 +117,8 @@ Dashboard
       <div class="modal-body">
         <div class="input-group mb-3">
           <label for="book_author">Book Title:
-            <input type="text" value="Book Title" autocomplete="off" id="book_author"
-              class="form-control" placeholder="Author" aria-label="Book Title" aria-describedby="basic-addon1" /></label>
+            <input type="text" value="{{fav_books[x].book_name}}" autocomplete="off" id="book_author"
+              class="form-control" placeholder="Book Title" aria-label="Book Title" aria-describedby="basic-addon1" /></label>
           <div class="input-group-append">
             <span class="input-group-text"></span>
           </div>
@@ -127,10 +132,12 @@ Dashboard
   </div>
 </div>
 
+{% endfor %}
+
 
   <!--Button trigger for btn (Book info)-->
   {% for book_num in range(num_of_books) %}
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="modal{{books[book_num].id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
