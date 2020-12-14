@@ -29,6 +29,7 @@ def load_user(user_id):
 def dashboard():
     # default values
     form = PostForm()
+    modalform = ModalForm()
     user_books = User_Books.query.filter_by(user_id=current_user.id).all()
     user_books_table = user_books
 # try:
@@ -37,7 +38,7 @@ def dashboard():
     books = user.user_books
     book_num = books.count()
 
-    fav_books = user.usr_fav_books #get the fav books using table relationships between user and fav_books
+    fav_books = user.user_fav_books #get the fav books using table relationships between user and fav_books
     fav_book_num = fav_books.count()
 
     if form.validate_on_submit():
@@ -49,7 +50,7 @@ def dashboard():
             add_to_user_book = User_Books(book_id=new_book_created.id,book_summary=form.Summary.data,user_id=current_user.id)
             db.session.add(add_to_user_book)
             db.session.commit()
-            flash("new book added", "success")
+            flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
             return redirect("dashboard")
         except:
             db.session.rollback()
@@ -60,7 +61,7 @@ def dashboard():
     #   flash("An error occured when trying to get your books", "danger")
     return render_template('dashboard.html', name=current_user.username,
                            books=books, num_of_books=book_num, fav_book_num=fav_book_num,
-                           fav_books=fav_books, ub=user_books_table,form=form)
+                           fav_books=fav_books,user=user, ub=user_books_table,form=form,modalform=modalform)
 
 
 @app.route('/')
@@ -155,10 +156,10 @@ def delete(id):
     try:
         db.session.delete(delete_book)
         db.session.commit()
-        flash("Book Deleted successfully!", "success")
+        flash("{} Deleted successfully!".format(delete_book.book_id), "success")
         return redirect("/dashboard")
     except:
-        flash("Couldn't delete your book, please try again", "warning")
+        flash("An error occured while deleting your book", "warning")
         return redirect("/dashboard")
 
 

@@ -19,19 +19,58 @@ Dashboard
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
 <style>
-  .navbar-toggle {
-    float: inline-start;
-  }
 
   .modal-dialog {
-    display: inline-block;
     text-align: left;
     vertical-align: center;
+
   }
+
+  .form-wrapper input[type="submit"] {
+ display: block;
+ background: rgb(110, 28, 28);
+ color: rgb(98, 21, 21);
+ border: none;
+ padding: 10px 20px;
+ -moz-border-radius: 2px;
+ border-radius: 2px;
+ cursor: pointer;
+}
 </style>
 {% endblock %}
 
 {% block content %}
+
+<!--Flash messages-->
+{% with messages = get_flashed_messages(category_filter=["success"]) %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">x</span>
+  </button>
+  {{message}}
+  </button>
+</div>
+{% endfor  %}
+{% endif %}
+{% endwith %}
+
+{% with messages = get_flashed_messages(category_filter=["warning"]) %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissable" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">x</span>
+  </button>
+  {{message}}
+  </button>
+</div>
+{% endfor  %}
+{% endif %}
+{% endwith %}
+
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -170,15 +209,16 @@ Dashboard
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <form class="form-add_content" method="POST">
+            {{ form.hidden_tag() }}
             <div class="form-group">
-              <label for="recipient-name" class="col-form-label">Title:</label>
+              <label for="recipient-name" class="col-form-label">Book Title:</label>
               <input type="text" value="{{books[book_num].book_name}}" autocomplete="off" id="book_author"
                   class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
               <label for="recipient-name" class="col-form-label">Author:</label>
-              <input type="text" value="{{books[book_num].author}}" autocomplete="off" id="book_author"
+              <input type="text" value="{{user.user_books[book_num].author}}" autocomplete="off" id="book_author"
                   class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
@@ -187,14 +227,15 @@ Dashboard
                   class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
-              <label for="message-text" class="col-form-label">Message:</label>
-              <textarea class="form-control"  placeholder="Write a short story about the book" id="message-text" aria-valuenow={{books[book_num].book_summary}}></textarea>
+              <label for="message-text" class="col-form-label">Summary:</label>
+              <textarea class="form-control" placeholder="Write a short story about the book" id="message-text" >"{{books[book_num].book_summary}}"</textarea>
             </div>
-          </form>
-        </div>
+            {{ wtf.form_field(modalform.add_to_fav) }}
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save</button>
+          {{ wtf.form_field(modalform.Submit) }}
+        </form>
+      </div>
         </div>
       </div>
     </div>
@@ -203,24 +244,11 @@ Dashboard
   {% endfor %}
 
 
-<!--Flash messages-->
-  {% with messages = get_flashed_messages(category_filter=["success"]) %}
-  {% if messages %}
-  {% for message in messages %}
-  <div class="alert alert-success alert-dismissable" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="close">
-      <span aria-hidden="true">x</span>
-    </button>
-    {{message}}
-    </button>
-  </div>
-  {% endfor  %}
-  {% endif %}
-  {% endwith %}
+
 
 <!--Add new book Modal-->
   <div class="modal fade" id="addbookmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog model-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">New Book</h5>

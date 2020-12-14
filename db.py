@@ -29,10 +29,11 @@ class Users(UserMixin, db.Model):
     lazy='dynamic',
     backref=db.backref('user', lazy='dynamic'))
 
-    usr_fav_books = db.relationship('Books',
+    user_fav_books = db.relationship('Books',
     secondary="user_fav_books",
     lazy='dynamic',
     backref=db.backref('usr_favorite', lazy='dynamic'))
+
 
 
 #what is the relationship between the user and All_Books?

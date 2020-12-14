@@ -148,6 +148,12 @@ body {
 }
 
 
-/* add new books btn
+/* navbar fix later */
+.navbar-toggle {
+  float: inline-start;
+}
 
-
+.modal-dialog {
+  text-align: center;
+  vertical-align: center;
+}
