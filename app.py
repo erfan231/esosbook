@@ -1,17 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-#import request
-from database import app, db, Users, Books, User_Books
+from db import app, db, Users, Books, User_Books
+from forms import *
 from sqlalchemy.exc import IntegrityError
+import requests
 
 db.create_all()
-
 
 host = "10.254.25.197"
 port = 5000
@@ -27,62 +24,49 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[
-                           InputRequired(), Length(min=4, max=15)], render_kw={"placeholder": "Username"})
-    password = PasswordField('password', validators=[
-                             InputRequired(), Length(min=8, max=80)], render_kw={"placeholder": "Password"})
-    remember = BooleanField('remember me')
-
-
-class RegisterForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired(), Email(
-        message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
-    username = StringField('Username', validators=[
-                           InputRequired(), Length(min=4, max=15)], render_kw={"placeholder": "Username"})
-    password = PasswordField('Password', validators=[
-                             InputRequired(), Length(min=6, max=80)], render_kw={"placeholder": "Password"})
-    confirm_password = PasswordField(
-        "Confirm Password", validators=[InputRequired()], render_kw={"placeholder": "Confirm Password"})
-
-
-@app.route('/dashboard')
+@app.route('/dashboard', methods=["GET", "POST"])
 @login_required
 def dashboard():
     # default values
+    form = PostForm()
     user_books = User_Books.query.filter_by(user_id=current_user.id).all()
-    user_books_id = user_books[0].id
-    try:
-        user = Users.query.filter_by(username=str(current_user.username)).first()
+    user_books_table = user_books
+# try:
+    user = Users.query.filter_by(username=str(current_user.username)).first() 
 
-        books = user.user_books
-        book_num = books.count()
+    books = user.user_books
+    book_num = books.count()
 
-        fav_books = user.usr_fav_books
-        fav_book_num = fav_books.count()
+    fav_books = user.usr_fav_books #get the fav books using table relationships between user and fav_books
+    fav_book_num = fav_books.count()
 
-
-    except:
-        flash("An error occured when trying to get your books", "danger")
-    return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num, fav_book_num=fav_book_num, fav_books=fav_books, ub=user_books_id)
+    if form.validate_on_submit():
+        try:
+            new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
+                                    category=form.Category.data)
+            db.session.add(new_book_created)
+            db.session.commit()
+            add_to_user_book = User_Books(book_id=new_book_created.id,book_summary=form.Summary.data,user_id=current_user.id)
+            db.session.add(add_to_user_book)
+            db.session.commit()
+            flash("new book added", "success")
+            return redirect("dashboard")
+        except:
+            db.session.rollback()
+            db.session.commit()
+        finally:
+            pass
+    # except:
+    #   flash("An error occured when trying to get your books", "danger")
+    return render_template('dashboard.html', name=current_user.username,
+                           books=books, num_of_books=book_num, fav_book_num=fav_book_num,
+                           fav_books=fav_books, ub=user_books_table,form=form)
 
 
 @app.route('/')
 def index():
-    global ub
     if current_user.is_authenticated:
-
-        user = Users.query.filter_by(username=str(current_user.username)).first()
-        books = user.user_books
-        book_num = books.count()
-
-        user_books = User_Books.query.filter_by(id=current_user.id).first()
-        ub = user_books.id
-
-        fav_books = user.usr_fav_books
-        fav_book_num = fav_books.count()
-
-        return render_template('dashboard.html', name=current_user.username, books=books, num_of_books=book_num, fav_book_num=fav_book_num, fav_books=fav_books)
+        return redirect("/dashboard")
     return render_template('index.html')
 
 
@@ -112,9 +96,6 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
-    login_form = LoginForm()
-    pass_not = None  # for later use
-
     if form.validate_on_submit():
         if form.password.data == form.confirm_password.data:
             hashed_password = generate_password_hash(
@@ -126,45 +107,45 @@ def signup():
                 db.session.commit()
                 flash("User  {} has been sucessfully created!".format(str(form.username.data)), "success")
 
-                return render_template('login.html', form=login_form)
+                return redirect("login")
         # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
             except IntegrityError as error:
                 flash("User already exists. Please login instead", "warning")
-        pass_not = "password don't match"
-        flash(pass_not, "warning")
+        flash("Password doesn't match", "warning")
 
-    return render_template('signup.html', form=form, flash=flash, pass_not=pass_not)
-
-
-@app.route("/export")
-def export():
-    #data = zip(Book_titles,Book_prices)
-    return render_template("export_books.html", data=("book", "idk"))
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
-@app.route("/testform", methods=['GET', 'POST'])
-def form():
-    if request.method == 'POST':
-        if request.form['submit_button'] == 'Do Something':
-            return "DO something worked"
-        elif request.form['submit_button'] == 'Do Something Else':
-            pass  # do something else
-
-    elif request.method == 'GET':
-        return render_template('test_forms.html', form=form)
+    return render_template('signup.html', form=form)
 
 
 @app.route("/user")
 @login_required
 def profile():
     return render_template("profile.html")
+
+
+@app.route("/book_new", methods=["POST", "GET"])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        try:
+            new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
+                                    category=form.Category.data)
+            db.session.add(new_book_created)
+            db.session.commit()
+            flash("new book added", "success")
+            add_to_user_book = User_Books(book_id=new_book_created.id,book_summary=form.Summary.data,user_id=current_user.id)
+            db.session.add(add_to_user_book)
+            db.session.commit()
+            return redirect("dashboard")
+        except:
+            db.session.rollback()
+            db.session.commit()
+        finally:
+            pass
+            
+
+       
+    return render_template("book_new.html", form=form)
 
 
 @app.route("/delete/<int:id>")
@@ -174,10 +155,33 @@ def delete(id):
     try:
         db.session.delete(delete_book)
         db.session.commit()
+        flash("Book Deleted successfully!", "success")
         return redirect("/dashboard")
     except:
-        return "problem deleting user book"
+        flash("Couldn't delete your book, please try again", "warning")
+        return redirect("/dashboard")
 
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+"""
+@app.route("/export")
+def export():
+    #data = zip(Book_titles,Book_prices)
+    return render_template("export_books.html", data=("book", "idk"))
+"""
+
+
+
+@app.route("/testform", methods=['GET', 'POST'])
+def form():
+    
+    return render_template('test_forms.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host=host, port=port)

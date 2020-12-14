@@ -1,5 +1,5 @@
 $("img_btn").on("click", function(){
-    //when the use clicks the btn
+    //when the user clicks the btn
 
 });
 

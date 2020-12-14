@@ -1,24 +1,26 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+
+
 {% block title %}
-Login
+New Book
 {% endblock %}
 
 {% block styles %}
 {{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='dashboard.css')}}">
 <style>
-  p {
-    text-align: center;
-    font-weight: bold;
+  .navbar-toggle {
+    float: inline-start;
   }
 
-  h2 {
-    text-align: center;
+  .modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: center;
   }
 </style>
-
 {% endblock %}
 
 {% block content %}
@@ -36,73 +38,63 @@ Login
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{url_for('index') }}">Home</a></li>
         <li><a href="#">Settings</a></li>
         <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}">Log Out</a></li>
       </ul>
+      <form class="navbar-form navbar-right">
+        <input type="text" class="form-control" placeholder="Search...">
+      </form>
     </div>
   </div>
 </nav>
 
 
-{% with messages = get_flashed_messages(category_filter=["danger"]) %}
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-danger" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="close">
-    <span aria-hidden="true">X</span>
-  </button>
-  {{message}}
-</div>
 
-{% endfor  %}
-{% endif %}
-{% endwith %}
-
-<!--Success flash-->
 {% with messages = get_flashed_messages(category_filter=["success"]) %}
 {% if messages %}
 {% for message in messages %}
-<div class="alert alert-success" role="alert">
+<div class="alert alert-success alert-dismissable" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="close">
-    <span aria-hidden="true">X</span>
+    <span aria-hidden="true">x</span>
   </button>
   {{message}}
+  </button>
 </div>
-
 {% endfor  %}
+
+{% endif %}
+
+{% endwith %}
+
+{% with errors = get_flashed_messages(category_filter=["warning"]) %}
+{% if errors %}
+<div class="alert-message block-message error">
+  <a class="close" href="#">×</a>
+  <ul>
+    {%- for msg in errors %}
+    <li>{{ msg }}</li>
+    {% endfor -%}
+  </ul>
+</div>
 {% endif %}
 {% endwith %}
 
 
-<!--Warning flash-->
-{% with messages = get_flashed_messages(category_filter=["warning"]) %}
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-warning" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="close">
-    <span aria-hidden="true">X</span>
-  </button>
-  {{message}}
-</div>
-
-{% endfor  %}
-{% endif %}
-{% endwith %}
 
 
 <div class="container">
 
-  <form class="form-signin" method="POST" action="/login">
-    <h2 class="form-signin-heading">Please sign in</h2>
+  <form class="form-add_content" method="POST">
+    <h2 class="form-heading">Add books</h2>
     {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.username) }}
-    {{ wtf.form_field(form.password) }}
-    {{ wtf.form_field(form.remember) }}
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    {{ wtf.form_field(form.Title) }}
+    {{ wtf.form_field(form.Author) }}
+    {{ wtf.form_field(form.Category) }}
+    {{ wtf.form_field(form.Summary) }}
+    {{wtf.form_field(form.Submit)}}
+    <a href="dashboard" class="btn btn-danger">Cancel</a>
   </form>
-
-  <p>Not a member yet? <a href="{{ url_for('signup') }}">Sign Up</a></p>
-
-
 </div> <!-- /container -->
 {% endblock %}
