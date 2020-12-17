@@ -4,16 +4,17 @@ from wtforms.validators import InputRequired, Email, Length
 
 
 class LoginForm(FlaskForm):
-    username = StringField('username', validators=[
-                           InputRequired(), Length(min=4, max=15)], render_kw={"placeholder": "Username"})
+    email = StringField('Email', validators=[InputRequired(), Email(
+        message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
     password = PasswordField('password', validators=[
-                             InputRequired(), Length(min=8, max=80)], render_kw={"placeholder": "Password"})
+                             InputRequired(), Length(max=80)], render_kw={"placeholder": "Password"})
     remember = BooleanField('remember me')
 
 
 class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(
         message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
+
     username = StringField('Username', validators=[
                            InputRequired(), Length(min=4, max=15)], render_kw={"placeholder": "Username"})
     password = PasswordField('Password', validators=[
@@ -23,14 +24,20 @@ class RegisterForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    Title = StringField("Title", validators=[InputRequired()])
-    Author = StringField("Author")
-    Category = StringField("Category")
-    Summary = TextAreaField("Summary:", validators=[InputRequired()])
+    Title = StringField("Title", validators=[InputRequired()], render_kw={"placeholder": "Title of the Book"})
+    Author = StringField("Author", render_kw={"placeholder": "Author of the Book"})
+    Category = StringField("Category", render_kw={"placeholder": "E.g Fiction"})
+    Summary = TextAreaField("Summary:", validators=[InputRequired()], render_kw={"placeholder": "Notes"})
     Submit = SubmitField("Add book")
     add_to_fav = BooleanField('Move to favourite')
 
 
-class ModalForm(FlaskForm):
+
+
+class UpdateForm(FlaskForm):
+    Title = StringField("Title", validators=[InputRequired()], render_kw={"placeholder": "Title of the Book"})
+    Author = StringField("Author", render_kw={"placeholder": "Author of the Book"})
+    Category = StringField("Category", render_kw={"placeholder": "E.g Fiction"})
+    Summary = TextAreaField("Summary:", validators=[InputRequired()], render_kw={"placeholder": "Notes"})
     Submit = SubmitField("Update")
-    add_to_fav = BooleanField('Move to favourite')
+    move_to_fav = BooleanField('Move to favourite',default=False)

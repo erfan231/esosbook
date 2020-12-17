@@ -85,9 +85,11 @@ body {
 }
 
 
-/*
- * Placeholder dashboard ideas
- */
+.main .page-header {
+  padding-bottom: 6px;
+  margin: 10px 0 13px;
+  border-bottom: 1px solid #eee;
+}
 
 .placeholders {
   margin-bottom: 30px;
@@ -153,7 +155,3 @@ body {
   float: inline-start;
 }
 
-.modal-dialog {
-  text-align: center;
-  vertical-align: center;
-}
