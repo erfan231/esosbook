@@ -3,21 +3,37 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from db import app, db, Users, Books, User_Books
-from forms import *
+from database_org import *
+from forms import LoginForm, RegisterForm, PostForm, UpdateForm, RequestPasswordResetForm, ResetPasswordForm
 from sqlalchemy.exc import IntegrityError
 import datetime
+from flask_mail import Mail, Message
+import os
 
 
-db.create_all()
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'new_erfan'  # os.environ.get("Secret_Key")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # os.environ.get("DB_URL)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # don't worry about this alot
 
-host = "10.254.25.197"
-port = 5000
+db = SQLAlchemy(app)
+db.init_app(app)
 
 bootstrap = Bootstrap(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "erfanmahmoodicvc@gmail.com"  # os.environ.get("EMAIL_USER")
+app.config["MAIL_PASSWORD"] = "erfanmahqw1"  # os.environ.get("EMAIL_PASSWORD")
+
+mail = Mail(app)
+
+
+host = "192.168.20.25"
+port = 5000
 
 
 @login_manager.user_loader
@@ -27,21 +43,18 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html',user_legged_in_already=current_user.is_authenticated)
+    return render_template('index.html', current_user_is_authenticated=current_user.is_authenticated)
 
 
 @app.route('/dashboard', methods=["GET", "POST"])
 @login_required
 def dashboard():
-    # default values
     form = PostForm()
-    updateform = UpdateForm()
+    updateform = UpdateForm() # make the move to fav from general books
     user_books = User_Books.query.filter_by(user_id=current_user.id).all()
     ub = user_books
-   
-# try:
-    user = Users.query.filter_by(username=str(current_user.username)).first()
 
+    user = Users.query.filter_by(username=str(current_user.username)).first()
     books = user.user_books
     book_num = books.count()
 
@@ -50,24 +63,95 @@ def dashboard():
 
     # adding books modal
     if form.validate_on_submit():
-        
-        new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
-                                    category=form.Category.data, owner=current_user.id)
-        db.session.add(new_book_created)
-        db.session.commit()
-        add_to_user_book = User_Books(book_id=new_book_created.id,
-                                        book_summary=form.Summary.data, user_id=current_user.id,time_added=datetime.datetime.now(),last_updated=datetime.datetime.now())
-        db.session.add(add_to_user_book)
-        db.session.commit()
-        #flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
-        return redirect("dashboard")
-    
-        db.session.rollback()
-        #flash("error occured", "warning")
-    
-        db.session.commit()
-    # except:
-    #   flash("An error occured when trying to get your books", "danger")
+        # deciding weather to add to fav books or normal books
+        book_id = db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).first() #for later use
+        if form.add_to_fav.data == False:
+
+            if db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() < 1:
+                try:
+                    new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
+                                             category=form.Category.data, owner=current_user.id)
+
+                    db.session.add(new_book_created)
+                    db.session.commit()
+
+                    add_to_user_book = User_Books(user_id=current_user.id,book_id=new_book_created.id,
+                                                  book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                    db.session.add(add_to_user_book)
+                    flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                    return redirect("dashboard")
+
+                except:
+                    db.session.rollback()
+                    flash("An error occured, try again.", "warning")
+                finally:
+                    db.session.commit()
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_Books).filter_by(book_id=book_id.id, user_id=current_user.id).count() < 1:
+
+                add_to_user_book = User_Books(book_id=book_id.id,
+                                              book_summary=form.Summary.data, user_id=current_user.id, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                db.session.add(add_to_user_book)
+                flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                return redirect("dashboard")
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_Books).filter_by(book_id=book_id.id, user_id=current_user.id).count() >= 1:
+                flash("Book already in your collection", "success")
+
+        # add to fav books
+        #flash("boolean working", "success")
+        if form.add_to_fav.data == True:
+            if db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() < 1:
+                    try:
+                        new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
+                                                category=form.Category.data, owner=current_user.id)
+
+                        db.session.add(new_book_created)
+                        db.session.commit()
+
+                        add_to_user_book = User_fav_books(user_id=current_user.id,book_id=new_book_created.id,
+                                                    book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                        db.session.add(add_to_user_book)
+                        flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                        return redirect("dashboard")
+
+                    except:
+                        db.session.rollback()
+                        flash("An error occured, try again.", "warning")
+                    finally:
+                        db.session.commit()
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=book_id.id, user_id=current_user.id).count() < 1:
+
+                add_to_user_fav_book = User_fav_books(book_id=book_id.id,
+                                            book_summary=form.Summary.data, user_id=current_user.id, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                db.session.add(add_to_user_fav_book)
+                flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                return redirect("dashboard")
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=book_id.id, user_id=current_user.id).count() >= 1:
+                flash("Book already in your collection", "success")
+        """
+        if db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() < 1:
+            try:
+                create_new_book = Books(book_name=form.Title.data, author=form.Author.data,
+                                         category=form.Category.data, owner=current_user.id)
+                db.session.add(create_new_book)
+                db.session.commit()
+                add_to_user_fav_book = User_fav_books(user_id=current_user.id,book_id=create_new_book.id,book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                db.session.add(add_to_user_fav_book)
+                flash("{} has been added successfully to your favourite book collection".format(form.Title.data), "success")
+                return redirect("dashboard")
+            except:
+                db.session.rollback()
+                flash("An error occured, try again.", "warning")
+            finally:
+                db.session.commit()
+
+        elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1:
+            add_to_user_fav_book = User_fav_books(book_id=book_id.id,
+                                                  book_summary=form.Summary.data, user_id=current_user.id, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+            db.session.add(add_to_user_fav_book)
+            flash("{} has been added successfully to your favourite book collection".format(form.Title.data), "success")
+            return redirect("dashboard")
+            """
+
     return render_template('dashboard.html', name=current_user.username,
                            books=books, num_of_books=book_num, fav_book_num=fav_book_num,
                            fav_books=fav_books, user=user, ub=ub, form=form, updateform=updateform)
@@ -75,6 +159,8 @@ def dashboard():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect("dashboard")
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -89,13 +175,16 @@ def login():
             else:
                 flash("Invalid Credential, Try again", "warning")
         else:
-            flash("user don't exists, Please Sign Up", "warning")
+            flash("User don't exists, Please Sign Up", "warning")
 
     return render_template('login.html', form=form)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect("dashboard")
+
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data == form.confirm_password.data:
@@ -125,58 +214,53 @@ def profile():
     return render_template("profile.html")
 
 
-@app.route("/book_new", methods=["POST", "GET"])
-@login_required
-def new_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        try:
-            new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
-                                     category=form.Category.data)
-            db.session.add(new_book_created)
-            db.session.commit()
-            add_to_user_book = User_Books(book_id=new_book_created.id,
-                                          book_summary=form.Summary.data, user_id=current_user.id)
-            db.session.add(add_to_user_book)
-            flash("new book added", "success")
-            return redirect("dashboard")
-        except:
-            db.session.rollback()
-        finally:
-            db.session.commit()
-
-    return render_template("book_new.html", form=form)
-
-
 @app.route("/delete/<int:book_id>")
+@login_required
 def delete(book_id):
-    delete_book = User_Books.query.filter_by(book_id=book_id).first_or_404()
+    delete_book = db.session.query(User_Books).filter_by(book_id=book_id).first_or_404()
+    #delete_book = User_Books.query.filter_by(book_id=book_id).first_or_404()
     if delete_book.user_id != current_user.id:
         abort(403)
 
-    try:
-        db.session.delete(delete_book)
-        flash("Deleted successfully!", "success")
-        
-    except:
-        db.session.rollback()
-        return redirect("/dashboard")
-    finally:
-        db.session.commit()
-        return redirect("/dashboard")
+    db.session.delete(delete_book)
+    db.session.commit()
+    flash("Deleted successfully!", "success")
+
+    # db.session.rollback()
+    #flash("couldn't delete book", "warning")
+    db.session.commit()
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/delete_fav_book/<int:book_id>")
+@login_required
+def delete_fav_book(book_id):
+    delete_book = db.session.query(User_fav_books).filter_by(book_id=book_id).first_or_404()
+    #delete_book = User_Books.query.filter_by(book_id=book_id).first_or_404()
+    if delete_book.user_id != current_user.id:
+        abort(403)
+
+    db.session.delete(delete_book)
+    db.session.commit()
+    flash("Deleted successfully!", "success")
+
+    # db.session.rollback()
+    #flash("couldn't delete book", "warning")
+    db.session.commit()
+    return redirect(url_for("dashboard"))
 
 @app.route("/update/<int:id>", methods=["POST"])
+@login_required
 def update(id):
     if request.method == "POST":
         try:
-            update_book = Books.query.filter_by(id=id).first_or_404()
-            update_book_summary = User_Books.query.filter_by(book_id=id).first_or_404()
-
-            update_book.book_name = request.form['book_name']
-            update_book.author = request.form['author']
-            update_book.category = request.form['category']
-            update_book_summary.book_summary = request.form['summary']
-            update_book_summary.last_updated = datetime.datetime.now()
+            #update_book = Books.query.filter_by(id=id).first_or_404()
+            #update_book_summary = User_Books.query.filter_by(book_id=id).first_or_404()
+            db.session.query(Books).filter_by(id=id).update({"book_name": request.form["book_name"],
+                                                             "author": request.form["author"],
+                                                             "category": request.form["category"]})
+            db.session.query(User_Books).filter_by(book_id=id).update({"book_summary": request.form["summary"],
+                                                                       "last_updated": datetime.datetime.now()})
             flash("Book updated Successfully!", "success")
         except:
             db.session.rollback()
@@ -186,6 +270,70 @@ def update(id):
     return redirect("/dashboard")
 
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message("Password Reset Request", sender="noreply@EsosBook.com",
+                  recipients=[user.email])
+    msg.body = f"""To reset your password visit the following link:
+{url_for('reset_password', token=token, _external=True)}
+
+
+If you did not make this request then simply ignore this email and no changes will be made.
+ """
+
+    mail.send(msg)
+
+
+@app.route("/reset_password_request", methods=["GET", "POST"])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect("dasboard")
+
+    form = RequestPasswordResetForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash("An email has been sent with instructions to reset your password.", "info")
+        return redirect("/login")
+
+    return render_template("reset_password_request.html", form=form)
+
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    global hashed_password
+
+    form = ResetPasswordForm()
+    if current_user.is_authenticated:
+        return redirect("dasboard")
+    user = Users.verify_reset_token(token)
+    if user is None:
+        flash("Invalid or expired token", "warning")
+        return redirect("/reset_password_request")
+
+    if form.validate_on_submit():
+        if form.Password.data == form.Confirm_Password.data:
+            try:
+                hashed_password = generate_password_hash(
+                    form.Password.data, method='sha256')
+
+                user.password = hashed_password
+                db.session.query(Users).filter_by(id=user.id).update({"password": hashed_password})
+                flash("{} Your password has been updated!".format(user.username), "success")
+                return redirect("/login")
+            except:
+                flash("an error occured", "warning")
+            finally:
+                db.session.commit()
+        flash("Password don't match", "warning")
+
+    return render_template("reset_password.html", form=form)
+
+
+@app.errorhandler(404)
+def http_error_handler(error):
+    return render_template("404.html"), 404
+
 
 @app.route('/logout')
 @login_required
@@ -193,6 +341,11 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+
+@app.route("/testform", methods=['GET', 'POST'])
+def form():
+
+    return render_template('test_forms.html')
 
 
 if __name__ == '__main__':
@@ -206,9 +359,34 @@ def export():
     return render_template("export_books.html", data=("book", "idk"))
 """
 
-"""
-@app.route("/testform", methods=['GET', 'POST'])
-def form():
 
-    return render_template('test_forms.html')
+
+
+
+
+"""   ADD NEW BOOK THROUGH A PAGE
+
+@app.route("/book_new", methods=["POST", "GET"])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        try:
+            new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
+                                     category=form.Category.data)
+            db.session.add(new_book_created)
+            db.session.commit()
+            add_to_user_book = User_Books(book_id=new_book_created.id,
+                                          book_summary=form.Summary.data, user_id=current_user.id)
+            db.session.add(add_to_user_book)
+            flash("Book added successfully!", "success")
+            return redirect("dashboard")
+        except:
+            db.session.rollback()
+        finally:
+            db.session.commit()
+
+    return render_template("book_new.html", form=form)
+
+
 """

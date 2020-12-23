@@ -1,5 +1,6 @@
+import database_org
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, TextAreaField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, TextAreaField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length
 
 
@@ -41,3 +42,29 @@ class UpdateForm(FlaskForm):
     Summary = TextAreaField("Summary:", validators=[InputRequired()], render_kw={"placeholder": "Notes"})
     Submit = SubmitField("Update")
     move_to_fav = BooleanField('Move to favourite',default=False)
+    remove_from_fav = BooleanField("Remove from Favorite", default=False)
+
+
+class RequestPasswordResetForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email(
+        message='Invalid email'), Length(max=50)], render_kw={"placeholder": "Email"})
+    Submit  = SubmitField("Confirm")
+
+    def validate_email(self, email):
+        user = database_org.Users.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError("There is no account with that email. You must register first")
+
+
+
+
+class ResetPasswordForm(FlaskForm):
+    Password = PasswordField('New Password', validators=[
+                             InputRequired(), Length(min=6, max=80)], render_kw={"placeholder": "New Password"})
+    Confirm_Password = PasswordField(
+        "Confirm Password", validators=[InputRequired()], render_kw={"placeholder": "Confirm Password"})
+
+    Submit  = SubmitField("Reset Password")
+
+
+    

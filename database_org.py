@@ -3,15 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_login import UserMixin
 import datetime
-
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'new_erfan'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new_database.db'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # don't worry about this alot
-
-db = SQLAlchemy(app)
-db.init_app(app)
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from app import db, app
 
 
 class Users(UserMixin, db.Model):
@@ -19,6 +12,20 @@ class Users(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config["SECRET_KEY"], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config["SECRET_KEY"])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return Users.query.get(user_id)
+
 
     user_books = db.relationship('Books',
                                  secondary="user_books",

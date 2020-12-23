@@ -30,7 +30,7 @@ Dashboard
     opacity: 1;
   }
 
-  #delete {
+  #fav_dlt_btn {
     float:left;
   }
 
@@ -39,6 +39,14 @@ Dashboard
     margin: 10px 0 13px;
     border-bottom: 1px solid #eee;
     padding-left: 20px;
+}
+
+.navbar-toggle {
+  float:inline-start;
+}
+
+.book-styles {
+  text-align: center;
 }
 
 </style>
@@ -105,8 +113,8 @@ Dashboard
 <h3 class="page-header">Welcome, {{ name }}</h3>
 
 {% for x in range(fav_book_num) %}
-<div class="row placeholders">
-  <div class="col-xs-6 col-sm-3 placeholder">
+<div class="">
+  <div class="col-xs-6 col-sm-3 placeholder book-styles">
     <button type="button" class="btn btn-primary_new" id="img_btn" data-toggle="modal"
       data-target="#BookInfoModal{{fav_books[x].id}}"><img
         src="https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg" width="180"
@@ -142,14 +150,17 @@ Dashboard
       
       <td>{{books[book_num].book_name}}</td>
      
-      <td>{{ub[0].time_added}}</td>
-      <td>{{ub[0].last_updated}}</td>
+      <td>{{ub[book_num].time_added}}</td> <!--need to fix-->
+      <td>{{ub[book_num].last_updated}}</td>
       <td>
         <button type="button" class="btn btn-primary" data-toggle="modal"
           data-target="#BookInfoModal{{books[book_num].id}}" data-whatever="@getbootstrap">Book info</button>
       </td>
       <td>
-        <a href="delete/{{books[book_num].id}}" class="btn btn-danger">Delete</a>
+        <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete{{books[book_num].id}}">
+          Delete
+      </button>
+
       </td>
       {% endfor %}
 
@@ -157,6 +168,38 @@ Dashboard
       </td>
     </tbody>
   </table>
+
+
+
+<!--                                                      All the models                                                          -->
+
+       <!--Delete btn pop up confirmation normal book-->
+{% for book_num in range(num_of_books) %}
+       <div class="modal fade" id="confirm-delete{{books[book_num].id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+            
+                <div class="modal-body">
+                    <p>You are about to delete {{books[book_num].book_name}}, from your book collection</p>
+                      <p>This procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="delete/{{books[book_num].id}}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
 
 
 
@@ -195,11 +238,15 @@ Dashboard
             <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
               id="message-text"></textarea>
           </div>
-          {{ wtf.form_field(updateform.move_to_fav) }}
+          {{ wtf.form_field(updateform.remove_from_fav) }}
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             {{ wtf.form_field(updateform.Submit) }}
             
+            <!--<a href="delete_fav_book/{{fav_books[x].id}}" id="fav_dlt_btn" class="btn btn-danger">Delete</a>-->
+            <button class="btn btn-danger" data-toggle="modal" id="fav_dlt_btn" data-target="#confirm-delete{{fav_books[x].id}}">
+              Delete
+          </button>
 
         </form>
       </div>
@@ -210,7 +257,33 @@ Dashboard
 
   {% endfor %}
 
-
+       <!--Delete btn pop up confirmation favorite book-->
+       {% for x in range(fav_book_num) %}
+       <div class="modal fade" id="confirm-delete{{fav_books[x].id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                </div>
+            
+                <div class="modal-body">
+                    <p>You are about to delete {{fav_books[x].book_name}},</p>
+                      <p>This procedure is irreversible.</p>
+                    <p>Do you want to proceed?</p>
+                    <p class="debug-url"></p>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="delete_fav_book/{{fav_books[x].id}}"  class="btn btn-danger" data-dismiss="modal">Delete</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
   <!--Button trigger for btn (Book info)-->
   {% for book_num in range(num_of_books) %}
   <div class="modal fade" id="BookInfoModal{{books[book_num].id}}" tabindex="-1" role="dialog"

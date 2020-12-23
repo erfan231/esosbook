@@ -1,79 +1,80 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-  <title>Hello, world!</title>
+    <script data-require="jquery@*" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
 </head>
 
-<body>
-  <button type="button" class="btn btn-primary" data-toggle="modal-dialog" data-target="#modal">
-    test modal
-  </button>
 
 
-  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
-    aria-hidden="true"></div>
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Title:</span>
-          </div>
-          <input type="text" value="" autocomplete="off" id="book_author" class="form-control"
-            placeholder="Title of the book" aria-label="Author" aria-describedby="basic-addon1"></label>
-        </div>
-
-        <div class="modal-body">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Author:</span>
+<html lang="en">
+   <head>
+      <title>Bootstrap Example</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   </head>
+   <body>
+      <div class="container">
+      
+      <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ModalLogin">Open Modal</button>
+      
+      <div class="modal fade" id="ModalForgotPassword" role="dialog">
+         <div class="modal-dialog">
+            
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h4 class="modal-title">Forgot Password</h4>
+               </div>
+               <div class="modal-body">
+                  <form>
+                     <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmai1" aria-describedby="emailHelp" placeholder="Enter email">                        
+                     </div>
+                     <button type="submit" class="btn btn-primary">Submit</button>
+                  </form>
+               </div>
             </div>
-            <input type="text" value="author" autocomplete="off" id="book_author" class="form-control"
-              placeholder="Author" aria-label="Author" aria-describedby="basic-addon1"></label>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">Category:</span>
-            </div>
-            <input type="text" value="categrogry" autocomplete="off" id="category" class="form-control"
-              placeholder="Author" aria-label="Author" aria-describedby="basic-addon1"></label>
-          </div>
-        </div>
-
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Summary:</span>
-          </div>
-          <textarea class="form-control" placeholder="Write a short summary about the book"
-            aria-label="Summary of the book">summary</textarea>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+         </div>
       </div>
-    </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
-</body>
-
+      
+      
+      <div class="modal fade" id="ModalLogin" role="dialog">
+      <div class="modal-dialog">
+         
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">×</button>
+               <h4 class="modal-title">Login</h4>
+            </div>
+            <div class="modal-body">
+               <form id="loginForm">
+                  <div class="form-group">
+                     <label for="exampleInputEmail1">Email address</label>
+                     <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                  </div>
+                  <div class="form-group">
+                     <label for="exampleInputPassword1">Password</label>
+                     <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                  </div>
+                  <div class="form-check">
+                     <a href="#" data-dismiss="modal" data-toggle="modal" id="forgotPassword" data-target="#ModalForgotPassword" class="form-check-label">Forgot Password?</a>
+                     <br><br>
+                  </div>
+                  <button type="button" (click)="login()" class="btn btn-primary">Login</button> <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+               </form>
+            </div>
+         </div>
+      </div>
+      
+   </body>
 </html>
+

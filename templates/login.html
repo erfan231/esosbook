@@ -5,18 +5,39 @@
 Login
 {% endblock %}
 
+{% block header %}
+<link rel="icon" href="data:,">
+{% endblock %}
+
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
 <style>
+ 
   p {
     text-align: center;
     font-weight: bold;
   }
-
+ 
   h2 {
     text-align: center;
   }
+  .navbar-toggle {
+  float:inline-start;
+}
+
+.forgot_password {
+  display:flex;
+  justify-content: right;
+  min-height: 20px;
+  margin-bottom: 0;
+  font-weight: 400;
+  cursor: pointer;
+
+  
+
+}
+}
 </style>
 
 {% endblock %}
@@ -91,6 +112,20 @@ Login
 {% endif %}
 {% endwith %}
 
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-info" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">X</span>
+  </button>
+  {{message}}
+</div>
+
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 
 <div class="container">
 
@@ -100,6 +135,7 @@ Login
     {{ wtf.form_field(form.email) }}
     {{ wtf.form_field(form.password) }}
     {{ wtf.form_field(form.remember) }}
+    <a href="{{ url_for('reset_request') }}" class="forgot_password">Forgot Password?</a>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
   </form>
 
