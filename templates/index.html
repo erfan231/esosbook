@@ -4,10 +4,10 @@
 Esos
 {% endblock %}
 
-
 {% block styles %}
 <link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
 {{super()}}
+
 <style>
   .starter-template {
     padding: 30px 15px;
@@ -16,6 +16,15 @@ Esos
 
 .navbar-toggle {
   float:inline-start;
+}
+
+.text-muted {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: black;
+    text-align: center;
 }
 
 </style>
@@ -82,4 +91,11 @@ Esos
 </div>
 
 </div>
+
+{% block footer %}
+
+        <p class="copyright text-muted">Copyright &copy; EsosBook</p>
+     
+
+{% endblock %}
 {% endblock %}

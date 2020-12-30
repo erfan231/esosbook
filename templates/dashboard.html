@@ -42,10 +42,14 @@ Dashboard
 }
 
 .navbar-toggle {
-  float:inline-start;
+  float:inline-start !important;
 }
 
 .book-styles {
+  text-align: center;
+}
+
+.style {
   text-align: center;
 }
 
@@ -113,7 +117,7 @@ Dashboard
 <h3 class="page-header">Welcome, {{ name }}</h3>
 
 {% for x in range(fav_book_num) %}
-<div class="">
+<div class="row placeholder style">
   <div class="col-xs-6 col-sm-3 placeholder book-styles">
     <button type="button" class="btn btn-primary_new" id="img_btn" data-toggle="modal"
       data-target="#BookInfoModal{{fav_books[x].id}}"><img
@@ -133,8 +137,6 @@ Dashboard
 
 <div class="table-responsive">
   <h2 class="sub-header">Other Read Books</h2>
-  <!--<a href="book_new" class="btn btn-success">Add Book(new page)</a>-->
-
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addbookmodal"
     data-whatever="@getbootstrap">New Book</button>
   <table class="table table-hover table-fixed">
@@ -150,7 +152,7 @@ Dashboard
       
       <td>{{books[book_num].book_name}}</td>
      
-      <td>{{ub[book_num].time_added}}</td> <!--need to fix-->
+      <td>{{ub[book_num].time_added}}</td>
       <td>{{ub[book_num].last_updated}}</td>
       <td>
         <button type="button" class="btn btn-primary" data-toggle="modal"
@@ -216,11 +218,10 @@ Dashboard
         </button>
       </div>
       <div class="modal-body">
-        <form class="form-add_content" method="POST">
-          {{ form.hidden_tag() }}
+        <form action="/update-fav-book/{{fav_books[x].id}}"class="form-add_content" method="POST">          {{ form.hidden_tag() }}
           <div class="form-group">
             <label for="recipient-name" class="col-form-label">Book Title:</label>
-            <input name="book_title" type="text" value="{{fav_books[x].book_name}}" autocomplete="off" id="fav_book_author"
+            <input name="book_name" type="text" value="{{fav_books[x].book_name}}" autocomplete="off" id="fav_book_author"
               class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
           </div>
           <div class="form-group">
@@ -238,13 +239,14 @@ Dashboard
             <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
               id="message-text"></textarea>
           </div>
-          {{ wtf.form_field(updateform.remove_from_fav) }}
+          <!--{{ wtf.form_field(updateform.remove_from_fav) }}-->
+          <a href="remove-from-fav-group/{{fav_books[x].book_id}}" >remove from fav book</a>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             {{ wtf.form_field(updateform.Submit) }}
             
-            <!--<a href="delete_fav_book/{{fav_books[x].id}}" id="fav_dlt_btn" class="btn btn-danger">Delete</a>-->
-            <button class="btn btn-danger" data-toggle="modal" id="fav_dlt_btn" data-target="#confirm-delete{{fav_books[x].id}}">
+            <button class="btn btn-danger" data-toggle="modal" id="fav_dlt_btn" data-target="#confirm-delete{{fav_books[x].id}}"data-dismiss="modal">
               Delete
           </button>
 
@@ -277,7 +279,8 @@ Dashboard
                 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a href="delete_fav_book/{{fav_books[x].id}}"  class="btn btn-danger" data-dismiss="modal">Delete</a>
+                    <a href="delete_fav_book/{{fav_books[x].id}}"  class="btn btn-danger">Delete</a>
+
                     
                 </div>
             </div>

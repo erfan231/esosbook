@@ -1,4 +1,4 @@
-import database_org
+import database
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, Email, Length
@@ -51,7 +51,7 @@ class RequestPasswordResetForm(FlaskForm):
     Submit  = SubmitField("Confirm")
 
     def validate_email(self, email):
-        user = database_org.Users.query.filter_by(email=email.data).first()
+        user = database.Users.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError("There is no account with that email. You must register first")
 
