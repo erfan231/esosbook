@@ -31,7 +31,7 @@ Dashboard
   }
 
   #fav_dlt_btn {
-    float:left;
+    float: left;
   }
 
   .page-header {
@@ -39,20 +39,19 @@ Dashboard
     margin: 10px 0 13px;
     border-bottom: 1px solid #eee;
     padding-left: 20px;
-}
+  }
 
-.navbar-toggle {
-  float:inline-start !important;
-}
+  .navbar-toggle {
+    float: inline-start !important;
+  }
 
-.book-styles {
-  text-align: center;
-}
+  .book-styles {
+    text-align: center;
+  }
 
-.style {
-  text-align: center;
-}
-
+  .style {
+    text-align: center;
+  }
 </style>
 {% endblock %}
 
@@ -87,6 +86,20 @@ Dashboard
 {% endif %}
 {% endwith %}
 
+{% with messages = get_flashed_messages(category_filter=["info"]) %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-info alert-dismissable" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">x</span>
+  </button>
+  {{message}}
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
@@ -103,7 +116,7 @@ Dashboard
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="{{url_for('index') }}">Home</a></li>
-        <li><a href="#">Settings</a></li>
+        <!--<li><a href="#">Settings</a></li>-->
         <!--<li><a href="{{ url_for('profile') }}">Profile</a></li>-->
         <li><a href="{{ url_for('logout') }}">Log Out</a></li>
       </ul>
@@ -117,7 +130,8 @@ Dashboard
 <h3 class="page-header">Welcome, {{ name }}</h3>
 
 {% for x in range(fav_book_num) %}
-<div class="row placeholder style">
+<div class="">
+  <!--<div class="row placeholder style">-->
   <div class="col-xs-6 col-sm-3 placeholder book-styles">
     <button type="button" class="btn btn-primary_new" id="img_btn" data-toggle="modal"
       data-target="#BookInfoModal{{fav_books[x].id}}"><img
@@ -149,9 +163,9 @@ Dashboard
     </thead>
     {% for book_num in range(num_of_books) %}
     <tbody>
-      
+
       <td>{{books[book_num].book_name}}</td>
-     
+
       <td>{{ub[book_num].time_added}}</td>
       <td>{{ub[book_num].last_updated}}</td>
       <td>
@@ -161,7 +175,7 @@ Dashboard
       <td>
         <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete{{books[book_num].id}}">
           Delete
-      </button>
+        </button>
 
       </td>
       {% endfor %}
@@ -173,34 +187,35 @@ Dashboard
 
 
 
-<!--                                                      All the models                                                          -->
+  <!--                                                      All the models                                                          -->
 
-       <!--Delete btn pop up confirmation normal book-->
-{% for book_num in range(num_of_books) %}
-       <div class="modal fade" id="confirm-delete{{books[book_num].id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
-                </div>
-            
-                <div class="modal-body">
-                    <p>You are about to delete {{books[book_num].book_name}}, from your book collection</p>
-                      <p>This procedure is irreversible.</p>
-                    <p>Do you want to proceed?</p>
-                    <p class="debug-url"></p>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a href="delete/{{books[book_num].id}}" class="btn btn-danger">Delete</a>
-                </div>
-            </div>
+  <!--Delete btn pop up confirmation normal book-->
+  {% for book_num in range(num_of_books) %}
+  <div class="modal fade" id="confirm-delete{{books[book_num].id}}" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
         </div>
+
+        <div class="modal-body">
+          <p>You are about to delete {{books[book_num].book_name}}, from your book collection</p>
+          <p>This procedure is irreversible.</p>
+          <p>Do you want to proceed?</p>
+          <p class="debug-url"></p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a href="delete/{{books[book_num].id}}" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
     </div>
-{% endfor %}
+  </div>
+  {% endfor %}
 
 
 
@@ -208,89 +223,7 @@ Dashboard
   <!--img_btn trigger-->
   {% for x in range(fav_book_num) %}
   <div class="modal fade" id="BookInfoModal{{fav_books[x].id}}" tabindex="-1" role="dialog"
-  aria-labelledby="ModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Book Information</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="/update-fav-book/{{fav_books[x].id}}"class="form-add_content" method="POST">          {{ form.hidden_tag() }}
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Book Title:</label>
-            <input name="book_name" type="text" value="{{fav_books[x].book_name}}" autocomplete="off" id="fav_book_author"
-              class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
-          </div>
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Author:</label>
-            <input name="author"type="text" value="{{fav_books[x].author}}" autocomplete="off" id="fav_book_author" class="form-control"
-              placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
-          </div>
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Category:</label>
-            <input name="category"type="text" value="{{fav_books[x].category}}" autocomplete="off" id="fav_book_author"
-              class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="col-form-label">Summary:</label>
-            <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
-              id="message-text"></textarea>
-          </div>
-          <!--{{ wtf.form_field(updateform.remove_from_fav) }}-->
-          <a href="remove-from-fav-group/{{fav_books[x].book_id}}" >remove from fav book</a>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            {{ wtf.form_field(updateform.Submit) }}
-            
-            <button class="btn btn-danger" data-toggle="modal" id="fav_dlt_btn" data-target="#confirm-delete{{fav_books[x].id}}"data-dismiss="modal">
-              Delete
-          </button>
-
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-  {% endfor %}
-
-       <!--Delete btn pop up confirmation favorite book-->
-       {% for x in range(fav_book_num) %}
-       <div class="modal fade" id="confirm-delete{{fav_books[x].id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
-                </div>
-            
-                <div class="modal-body">
-                    <p>You are about to delete {{fav_books[x].book_name}},</p>
-                      <p>This procedure is irreversible.</p>
-                    <p>Do you want to proceed?</p>
-                    <p class="debug-url"></p>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a href="delete_fav_book/{{fav_books[x].id}}"  class="btn btn-danger">Delete</a>
-
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-{% endfor %}
-  <!--Button trigger for btn (Book info)-->
-  {% for book_num in range(num_of_books) %}
-  <div class="modal fade" id="BookInfoModal{{books[book_num].id}}" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    aria-labelledby="ModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -300,37 +233,127 @@ Dashboard
           </button>
         </div>
         <div class="modal-body">
-          <form action="/update/{{books[book_num].id}}"class="form-add_content" method="POST">
-            {{ form.hidden_tag() }}
+          <form action="/update-fav-book/{{fav_books[x].id}}" class="form-add_content" method="POST"> {{
+            form.hidden_tag() }}
             <div class="form-group">
               <label for="recipient-name" class="col-form-label">Book Title:</label>
-              <input name="book_name"type="text" value="{{books[book_num].book_name}}" autocomplete="off" id="book_author"
-                class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
+              <input name="book_name" type="text" value="{{fav_books[x].book_name}}" autocomplete="off"
+                id="fav_book_author" class="form-control" placeholder="Author" aria-label="Author"
+                aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
               <label for="recipient-name" class="col-form-label">Author:</label>
-              <input name="author"type="text" value="{{books[book_num].author}}" autocomplete="off" id="book_author"
+              <input name="author" type="text" value="{{fav_books[x].author}}" autocomplete="off" id="fav_book_author"
                 class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
               <label for="recipient-name" class="col-form-label">Category:</label>
-              <input name="category"type="text" value="{{books[book_num].category}}" autocomplete="off" id="book_author"
-                class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
+              <input name="category" type="text" value="{{fav_books[x].category}}" autocomplete="off"
+                id="fav_book_author" class="form-control" placeholder="Author" aria-label="Author"
+                aria-describedby="basic-addon1" /></label>
             </div>
             <div class="form-group">
               <label for="message-text" class="col-form-label">Summary:</label>
               <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
-                id="message-text">{{ub[book_num].book_summary}}</textarea>
+                id="message-text">{{ub_fav_books[x].book_summary}}</textarea>
             </div>
-            {{ wtf.form_field(updateform.move_to_fav) }}
+            <!--{{ wtf.form_field(updateform.remove_from_fav) }}-->
+            <a href="remove-from-fav-group/{{fav_books[x].id}}">remove from fav book</a>
+
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button class="btn btn-secondary" type="submit">Update</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              {{ wtf.form_field(updateform.Submit) }}
+
+              <button class="btn btn-danger" data-toggle="modal" id="fav_dlt_btn"
+                data-target="#confirm-delete{{fav_books[x].id}}" data-dismiss="modal">
+                Delete
+              </button>
+
           </form>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+{% endfor %}
+
+<!--Delete btn pop up confirmation favorite book-->
+{% for x in range(fav_book_num) %}
+<div class="modal fade" id="confirm-delete{{fav_books[x].id}}" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+      </div>
+
+      <div class="modal-body">
+        <p>You are about to delete {{fav_books[x].book_name}},</p>
+        <p>This procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+        <p class="debug-url"></p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <a href="delete-fav- book/{{fav_books[x].id}}" class="btn btn-danger">Delete</a>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+<!--Button trigger for btn (Book info)-->
+{% for book_num in range(num_of_books) %}
+<div class="modal fade" id="BookInfoModal{{books[book_num].id}}" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Book Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/update/{{books[book_num].id}}" class="form-add_content" method="POST">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Book Title:</label>
+            <input name="book_name" type="text" value="{{books[book_num].book_name}}" autocomplete="off"
+              id="book_author" class="form-control" placeholder="Author" aria-label="Author"
+              aria-describedby="basic-addon1" /></label>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Author:</label>
+            <input name="author" type="text" value="{{books[book_num].author}}" autocomplete="off" id="book_author"
+              class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
+          </div>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Category:</label>
+            <input name="category" type="text" value="{{books[book_num].category}}" autocomplete="off" id="book_author"
+              class="form-control" placeholder="Author" aria-label="Author" aria-describedby="basic-addon1" /></label>
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Summary:</label>
+            <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
+              id="message-text">{{ub[book_num].book_summary}}</textarea>
+          </div>
+          <a href="add-to-fav-group/{{books[book_num].id}}">Add to favourite</a>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <button class="btn btn-secondary" type="submit">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 {% endfor %}

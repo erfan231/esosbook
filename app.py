@@ -54,6 +54,8 @@ def dashboard():
     updateform = UpdateForm()  # make the move to fav from general books
     user_books = User_Books.query.filter_by(user_id=current_user.id).all()
     ub = user_books
+    user_fav_books = User_fav_books.query.filter_by(user_id=current_user.id).all()
+    ub_fav_books = user_fav_books
 
     user = Users.query.filter_by(username=str(current_user.username)).first()
     books = user.user_books
@@ -85,6 +87,10 @@ def dashboard():
                     flash("An error occured, try again.", "warning")
                 finally:
                     db.session.commit()
+
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id, user_id=current_user.id).count() >= 1:
+                flash("Book already exists in favourite books table", "info")
+
             # books in Books table but not in user books table
             elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_Books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
                                                                                                                                                              user_id=current_user.id).count() <= 0:
@@ -95,7 +101,7 @@ def dashboard():
                 db.session.commit()
                 flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
                 return redirect("dashboard")
-            #Book exists in both table
+            # Book exists in both table
             elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_Books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id, user_id=current_user.id).count() >= 1:
                 flash("Book already in your collection", "info")
 
@@ -120,24 +126,27 @@ def dashboard():
                     flash("An error occured, try again.", "warning")
                 finally:
                     db.session.commit()
+            elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_Books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id, user_id=current_user.id).count() >= 1:
+                flash("Book already exists in normal books table", "info")
 
             elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
-                                                                                                                                                                        user_id=current_user.id).count() <= 0:
+                                                                                                                                                                 user_id=current_user.id).count() <= 0:
 
-                            add_to_user_book = User_fav_books(user_id=current_user.id, book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
-                                                        book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
-                            db.session.add(add_to_user_book)
-                            db.session.commit()
-                            flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
-                            return redirect("dashboard")
+                add_to_user_book = User_fav_books(user_id=current_user.id, book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
+                                                  book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                db.session.add(add_to_user_book)
+                db.session.commit()
+                flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                return redirect("dashboard")
 
-            #Book exists in both table
+            # Book exists in both table
             elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id, user_id=current_user.id).count() >= 1:
-                flash("Book already in your collection", "info")
+                flash("Book already exists in your collection", "info")
+            # Book exists in User_Books table
 
     return render_template('dashboard.html', name=current_user.username,
                            books=books, num_of_books=book_num, fav_book_num=fav_book_num,
-                           fav_books=fav_books, user=user, ub=ub, form=form, updateform=updateform)
+                           fav_books=fav_books, user=user, ub=ub, ub_fav_books=ub_fav_books, form=form, updateform=updateform)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -214,7 +223,7 @@ def delete(book_id):
     return redirect(url_for("dashboard"))
 
 
-@app.route("/delete_fav_book/<int:book_id>")
+@app.route("/delete-fav-book/<int:book_id>")
 @login_required
 def delete_fav_book(book_id):
     delete_book = db.session.query(User_fav_books).filter_by(book_id=book_id).first_or_404()
@@ -282,6 +291,24 @@ def remove_from_fav_group(id):
         db.session.commit()
         db.session.delete(remove_book)
         db.session.commit()
+        flash("transfer successful!", "success")
+
+    return redirect("/dashboard")
+
+
+@app.route("/add-to-fav-group/<int:id>", methods=["POST", "GET"])
+@login_required
+def add_to_fav_group(id):
+    if request.method == "GET":
+        remove_book = db.session.query(User_Books).filter_by(book_id=id, user_id=current_user.id).first()
+        move_book = User_fav_books(user_id=current_user.id, book_id=remove_book.book_id, book_summary=remove_book.book_summary,
+                                   time_added=remove_book.time_added, last_updated=remove_book.last_updated)
+
+        db.session.add(move_book)
+        db.session.commit()
+        db.session.delete(remove_book)
+        db.session.commit()
+        flash("transfer successful!", "success")
     return redirect("/dashboard")
 
 

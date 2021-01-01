@@ -12,21 +12,20 @@ Esos
   .starter-template {
     padding: 30px 15px;
     text-align: center;
-}
+  }
 
-.navbar-toggle {
-  float:inline-start;
-}
+  .navbar-toggle {
+    float: inline-start;
+  }
 
-.text-muted {
+  .text-muted {
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
     color: black;
     text-align: center;
-}
-
+  }
 </style>
 {% endblock %}
 
@@ -47,7 +46,7 @@ Esos
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="{{url_for('index') }}">Home</a></li>
-        <li><a href="#">Settings</a></li>
+        <!--<li><a href="#">Settings</a></li>-->
         <!--<li><a href="{{ url_for('profile') }}">Profile</a></li>-->
         <li><a href="{{ url_for('logout') }}">Log Out</a></li>
       </ul>
@@ -94,8 +93,8 @@ Esos
 
 {% block footer %}
 
-        <p class="copyright text-muted">Copyright &copy; EsosBook</p>
-     
+<p class="copyright text-muted">Copyright &copy; EsosBook</p>
+
 
 {% endblock %}
 {% endblock %}

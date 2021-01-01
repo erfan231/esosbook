@@ -1,10 +1,12 @@
 # NEW DB STRUCTURE
-from flask_sqlalchemy import SQLAlchemy
+import datetime
+
 from flask import Flask
 from flask_login import UserMixin
-import datetime
+from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from app import db, app
+
+from app import app, db
 
 
 class Users(UserMixin, db.Model):
@@ -25,7 +27,6 @@ class Users(UserMixin, db.Model):
         except:
             return None
         return Users.query.get(user_id)
-
 
     user_books = db.relationship('Books',
                                  secondary="user_books",
@@ -50,8 +51,6 @@ class Books(db.Model):
     users = db.relationship("Users", secondary="user_books")
     users = db.relationship("Users", secondary="user_fav_books")
     users = db.relationship(Users, backref=db.backref("Books", cascade="all, delete-orphan"))
-
-    
 
 
 # association table
@@ -83,6 +82,3 @@ class User_fav_books(db.Model):
     books = db.relationship(Books, backref=db.backref("User_fav_books", cascade="all,delete-orphan"))
 
     # add user books relationship
-
-
-

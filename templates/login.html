@@ -13,31 +13,30 @@ Login
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
 <style>
- 
   p {
     text-align: center;
     font-weight: bold;
   }
- 
+
   h2 {
     text-align: center;
   }
+
   .navbar-toggle {
-  float:inline-start;
-}
+    float: inline-start;
+  }
 
-.forgot_password {
-  display:flex;
-  justify-content: right;
-  min-height: 20px;
-  margin-bottom: 0;
-  font-weight: 400;
-  cursor: pointer;
+  .forgot_password {
+    display: flex;
+    justify-content: right;
+    min-height: 20px;
+    margin-bottom: 0;
+    font-weight: 400;
+    cursor: pointer;
+    float: left;
 
-  
 
-}
-}
+  }
 </style>
 
 {% endblock %}
