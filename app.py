@@ -9,7 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from database import *
 from forms import LoginForm, PostForm, RegisterForm, RequestPasswordResetForm, ResetPasswordForm, UpdateForm
 
 app = Flask(__name__)
@@ -36,7 +35,12 @@ mail = Mail(app)
 host = "192.168.20.25"
 port = 5000
 
+import database #to avoid import circualr import error
 
+User_Books = database.User_Books
+Books = database.Books
+Users = database.Users
+User_fav_books = database.User_fav_books
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
