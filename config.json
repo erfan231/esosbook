@@ -1,0 +1,8 @@
+{
+
+    "SECRET_KEY":" your secret key",
+    "MAIL_USERNAME":"example@gmail.com",
+    "MAIL_PASSWORD":"mail_password",
+    "WTF_CSRF_SECRET_KEY": "SCRF_SECRET_KEY",
+    "DB_URI": "sqlite:///DB_URI"
+}
