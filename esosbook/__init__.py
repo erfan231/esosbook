@@ -45,9 +45,3 @@ app.config["MAIL_USE_SSL"] = False
 mail = Mail(app)
 
 from esosbook import routes # if you move this at the top (circular import error)
-
-
-
-
-
-
