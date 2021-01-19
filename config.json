@@ -1,8 +1,11 @@
+
 {
 
-    "SECRET_KEY":" your secret key",
-    "MAIL_USERNAME":"example@gmail.com",
-    "MAIL_PASSWORD":"mail_password",
-    "WTF_CSRF_SECRET_KEY": "SCRF_SECRET_KEY",
-    "DB_URI": "sqlite:///DB_URI"
+    "SECRET_KEY":" b')\\x17UR\\xaf\\x1cRC=\\xef;/\\x8a\\xb1\\\\-b')\\x17UR\\xaf\\x1$",
+    "MAIL_USERNAME":"esosbook@gmail.com",
+    "MAIL_PASSWORD":"erfanmahqw1@",
+    "WTF_CSRF_SECRET_KEY": "b')\\x17UR\\xa#%dx1cRC=\\xef;/\\x8a\\xb1#!%h-b')\\x17UR\\xa$",
+    "DB_URI": "sqlite:///database.db"
 }
+
+

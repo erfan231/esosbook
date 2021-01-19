@@ -38,5 +38,21 @@ a:hover {
   text-decoration: none;
 }
 
+.starter-template {
+  padding: 30px 15px;
+  text-align: center;
+}
 
+.text-muted {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: black;
+  text-align: center;
+}
+
+.navbar-toggle {
+  float: inline-end !important;
+}
  

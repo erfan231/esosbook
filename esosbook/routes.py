@@ -8,7 +8,22 @@ from esosbook import app, db, login_manager
 from esosbook.database import Users, Books, User_Books, User_fav_books
 
 import datetime
+import re
+import json
+from urllib.request import urlopen
 
+
+class image_url:
+
+    def get_url(self, book_name):
+        a = book_name.split(" ")
+        book_name_value = ""
+        for x in range(len(a)):
+            book_name_value += a[x]+"+"
+
+        new_value = book_name_value[:-1]
+        url = "https://www.googleapis.com/books/v1/volumes?q={}&callback=handleResponse".format(new_value)
+        return url
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -36,6 +51,8 @@ def dashboard():
 
     fav_books = user.user_fav_books  # get the fav books using table relationships between user and fav_books
     fav_book_num = fav_books.count()
+    global pic_url
+    pic_url =None
 
     # adding books
     if form.validate_on_submit():
@@ -83,16 +100,22 @@ def dashboard():
             if db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() <= 0:
                 try:
                     new_book_created = Books(book_name=form.Title.data, author=form.Author.data,
-                                             category=form.Category.data, owner=current_user.id)
+                                             category=form.Category.data , owner=current_user.id)
 
                     db.session.add(new_book_created)
                     db.session.commit()
-
-                    add_to_user_book = User_fav_books(user_id=current_user.id, book_id=new_book_created.id,
-                                                      book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
-                    db.session.add(add_to_user_book)
-                    flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
-                    return redirect("dashboard")
+                    a = image_url()
+                    response = urlopen(a.get_url(form.Title.data))
+                    links = re.findall('"((http)?://.*?)"', str(response.read()))
+                    if len(links) <= 0:
+                        pic_url = "https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+                    else:
+                        pic_url = links[0][0] #save to db (pic_url)
+                        add_to_user_book = User_fav_books(user_id=current_user.id, book_id=new_book_created.id,
+                                                        book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now(), book_img_url=pic_url)
+                        db.session.add(add_to_user_book)
+                        flash("{} has been added successfully to your book collection".format(form.Title.data), "success")
+                        return redirect("dashboard")
 
                 except:
                     db.session.rollback()
@@ -119,7 +142,7 @@ def dashboard():
 
     return render_template('dashboard.html', name=current_user.username,
                            books=books, num_of_books=book_num, fav_book_num=fav_book_num,
-                           fav_books=fav_books, user=user, ub=ub, ub_fav_books=ub_fav_books, form=form, updateform=updateform)
+                           fav_books=fav_books, user=user, ub=ub, ub_fav_books=ub_fav_books,url=pic_url, form=form, updateform=updateform)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -274,8 +297,16 @@ def remove_from_fav_group(id):
 def add_to_fav_group(id):
     if request.method == "GET":
         remove_book = db.session.query(User_Books).filter_by(book_id=id, user_id=current_user.id).first()
+        books = db.session.query(Books).filter_by(id=id).first()
+        print(books.book_name)
+
+        a = image_url()   
+        response = urlopen(a.get_url(books.book_name))
+        links = re.findall('"((http)?://.*?)"', str(response.read()))
+        pic_url = links[0][0]
+
         move_book = User_fav_books(user_id=current_user.id, book_id=remove_book.book_id, book_summary=remove_book.book_summary,
-                                   time_added=remove_book.time_added, last_updated=remove_book.last_updated)
+                                   time_added=remove_book.time_added, last_updated=remove_book.last_updated, book_img_url=pic_url)
 
         db.session.add(move_book)
         db.session.commit()

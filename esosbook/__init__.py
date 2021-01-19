@@ -9,28 +9,24 @@ from flask_wtf import CSRFProtect
 import json
 
 
-
 app = Flask(__name__)
 csrf = CSRFProtect(app)
 
 
-with open("/esos/config.json" ) as config_file:
-        config = json.load(config_file) #python dict
+with open("config.json") as config_file:
+    config = json.load(config_file)  # python dict
 
 app.config.update(dict(
     SECRET_KEY=config.get("SECRET_KEY"),
     WTF_CSRF_SECRET_KEY=config.get("WTF_CSRF_SECRET_KEY"),
-    SESSION_TYPE = "filesystem",
-    SQLALCHEMY_DATABASE_URI = config.get("DB_URI"),
-    SQLALCHEMY_TRACK_MODIFICATIONS = False,
-    MAIL_USERNAME = config.get("MAIL_USERNAME"),
-    MAIL_PASSWORD = config.get("MAIL_PASSWORD")
+    SESSION_TYPE="filesystem",
+    SQLALCHEMY_DATABASE_URI=config.get("DB_URI"),
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    MAIL_USERNAME=config.get("MAIL_USERNAME"),
+    MAIL_PASSWORD=config.get("MAIL_PASSWORD")
 
 
 ))
-
-
-
 
 db = SQLAlchemy(app)
 db.init_app(app)
@@ -47,4 +43,11 @@ app.config["MAIL_USE_SSL"] = False
 
 
 mail = Mail(app)
-from esosbook import routes
+
+from esosbook import routes # if you move this at the top (circular import error)
+
+
+
+
+
+

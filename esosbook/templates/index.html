@@ -5,29 +5,8 @@ Esos
 {% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='index.css')}}">
 {{super()}}
-<style>
-
-  .starter-template {
-    padding: 30px 15px;
-    text-align: center;
-  }
-
-  .text-muted {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    color: black;
-    text-align: center;
-  }
- 
-  .navbar-toggle {
-    float: inline-end !important;
-  }
-
-</style>
 {% endblock %}
 
 {% block content %}
@@ -42,7 +21,7 @@ Esos
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a  class="navbar-brand" href="{{url_for('dashboard') }}">My Books</a>
+      <a class="navbar-brand" href="{{url_for('dashboard') }}">My Books</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
@@ -87,7 +66,7 @@ Esos
 
   <div class="starter-template">
     <h2>Welcome to Esos Library</h2>
-    <p class="lead">Use this website to keep  track of the books you've read.<br></p>
+    <p class="lead">Use this website to keep track of the books you've read.<br></p>
   </div>
 </div>
 

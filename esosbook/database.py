@@ -1,10 +1,11 @@
-# NEW DB STRUCTURE
+
 import datetime
 
 from flask import Flask, current_app
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 from esosbook import db
 
 
@@ -76,8 +77,13 @@ class User_fav_books(db.Model):
     book_summary = db.Column(db.String())
     time_added = db.Column(db.Date, default=datetime.datetime.now())
     last_updated = db.Column(db.Date, default=datetime.datetime.now())
+    book_img_url = db.Column(db.String())
+
 
     users = db.relationship(Users, backref=db.backref("User_fav_books", cascade="all, delete-orphan"))
     books = db.relationship(Books, backref=db.backref("User_fav_books", cascade="all,delete-orphan"))
 
     # add user books relationship
+
+
+db.create_all()
