@@ -127,9 +127,19 @@ def dashboard():
 
             elif db.session.query(Books).filter_by(book_name=form.Title.data, owner=current_user.id).count() >= 1 and db.session.query(User_fav_books).filter_by(book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
                                                                                                                                                                  user_id=current_user.id).count() <= 0:
-
+                
+                db.session.add(new_book_created)
+                db.session.commit()
+                    
+                a = image_url()
+                response = urlopen(a.get_url(form.Title.data))
+                links = re.findall('"((http)?://.*?)"', str(response.read()))
+                if len(links) <= 0:
+                    pic_url = "https://assets.entrepreneur.com/content/3x2/2000/20191219170611-GettyImages-1152794789.jpeg"
+                else:
+                    pic_url = links[0][0] #save to db (pic_url)
                 add_to_user_book = User_fav_books(user_id=current_user.id, book_id=db.session.query(Books).filter_by(book_name=form.Title.data).first().id,
-                                                  book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now())
+                                                  book_summary=form.Summary.data, time_added=datetime.datetime.now(), last_updated=datetime.datetime.now(), book_img_url=pic_url)
                 db.session.add(add_to_user_book)
                 db.session.commit()
                 flash("{} has been added successfully to your book collection".format(form.Title.data), "success")

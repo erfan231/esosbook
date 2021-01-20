@@ -38,7 +38,7 @@ Dashboard
 }
 
 .navbar-brand {
-    float: inline-end;
+    float: none;
     height: 50px;
     padding: 15px 15px;
     font-size: 18px;
@@ -140,16 +140,16 @@ Dashboard
   {% endfor %}
 </div>
 
-<div class="table-responsive">
+<div class=" table table-striped table-dark">
   <h2 class="sub-header">Other Read Books</h2>
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addbookmodal"
     data-whatever="@getbootstrap">New Book</button>
   <table class="table table-hover table-fixed">
     <thead>
-      <tr class="d-flex th-style">
-        <th>Book Name</th>
-        <th>Date Added</th>
-        <th>Last Updated</th>
+      <tr>
+        <th scope="col">Book Name</th>
+        <th scope="col">Date Added</th>
+        <th scope="col">Last Updated</th>
       </tr>
     </thead>
     {% for book_num in range(num_of_books) %}
@@ -248,7 +248,7 @@ Dashboard
               <textarea name="summary" class="form-control" placeholder="Write a short story about the book"
                 id="message-text">{{ub_fav_books[x].book_summary}}</textarea>
             </div>
-            <a href="remove-from-fav-group/{{fav_books[x].id}}">remove from fav book</a>
+            <a href="remove-from-fav-group/{{fav_books[x].id}}">remove from favorite collection</a>
 
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
