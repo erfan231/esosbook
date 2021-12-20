@@ -42,7 +42,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 MeaningCloud-python==1.2.3
 mysql-connector-python==8.0.21
-numpy==1.19.0
+numpy==1.22.0rc1
 pep8==1.7.1
 plyer==1.4.3
 protobuf==3.12.4
