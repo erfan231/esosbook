@@ -45,7 +45,7 @@ mysql-connector-python==8.0.21
 numpy==1.19.0
 pep8==1.7.1
 plyer==1.4.3
-protobuf==3.12.4
+protobuf==3.18.3
 pycodestyle==2.6.0
 pygame==1.9.6
 pylint==2.5.3
