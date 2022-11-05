@@ -37,7 +37,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 jsonschema==3.2.0
 lazy-object-proxy==1.4.3
-lxml==4.5.2
+lxml==4.9.1
 MarkupSafe==1.1.1
 mccabe==0.6.1
 MeaningCloud-python==1.2.3
@@ -45,13 +45,13 @@ mysql-connector-python==8.0.21
 numpy==1.19.0
 pep8==1.7.1
 plyer==1.4.3
-protobuf==3.12.4
+protobuf==3.18.3
 pycodestyle==2.6.0
 pygame==1.9.6
 pylint==2.5.3
 pyrsistent==0.16.0
 PyVirtualDisplay==1.3.2
-PyYAML==3.13
+PyYAML==5.4
 regex==2020.7.14
 requests==2.24.0
 selenium==3.141.0
@@ -61,7 +61,7 @@ soupsieve==2.0.1
 SQLAlchemy==1.3.20
 toml==0.10.1
 typed-ast==1.4.1
-urllib3==1.25.10
+urllib3==1.26.5
 virtualenv==20.0.27
 visitor==0.1.3
 Werkzeug==1.0.1
