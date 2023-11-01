@@ -7,3 +7,4 @@ flask_wtf
 email_validator
 gunicorn
 itsdangerous
+werkzeug>=3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
